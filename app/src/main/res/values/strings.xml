@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Lock Timer</string>
+    <string name="admin_receiver_label" translatable="false">Admin Receiver Label</string>
+    <string name="admin_receiver_description" translatable="false">Admin Receiver Description because why not...</string>
+</resources>
