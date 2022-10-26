@@ -5,10 +5,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import net.emrekalkan.locktimer.presentation.base.BaseActivity
 import net.emrekalkan.locktimer.presentation.ui.screen.onboarding.LockScreenAdminReceiver
 
 val Context.adminComponent: ComponentName
     get() = ComponentName(this, LockScreenAdminReceiver::class.java)
+
+val Context.baseActivity: BaseActivity
+    get() = this as BaseActivity
 
 fun Context.uninstallApp() {
     removeAdmin()

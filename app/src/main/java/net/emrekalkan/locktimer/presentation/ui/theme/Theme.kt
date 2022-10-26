@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-    primary = Color.Black,
+    primary = Color(0xFFCFAD00),
     primaryVariant = Color.DarkGray,
     secondary = Color.Yellow,
     background = Color.Black,
@@ -20,11 +20,10 @@ private val DarkColorPalette = darkColors(
 
 @Composable
 fun LockTimerTheme(content: @Composable () -> Unit) {
-    val systemUiController = rememberSystemUiController()
-    systemUiController.apply {
-        setStatusBarColor(DarkColorPalette.primary)
-        setNavigationBarColor(DarkColorPalette.primary)
-        setSystemBarsColor(DarkColorPalette.primary)
+    rememberSystemUiController().apply {
+        setStatusBarColor(DarkColorPalette.background)
+        setNavigationBarColor(DarkColorPalette.background)
+        setSystemBarsColor(DarkColorPalette.background)
     }
     MaterialTheme(
         colors = DarkColorPalette,

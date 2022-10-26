@@ -5,10 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,13 +18,16 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
+import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 
 object OnBoardingScreen : Screen(name = "OnBoardingScreen")
 
 @Preview
 @Composable
 fun OnBoardingScreenPreview() {
-    OnBoardingContent {}
+    LockTimerTheme {
+        OnBoardingContent {}
+    }
 }
 
 @Composable
@@ -142,18 +142,30 @@ private fun ConstraintLayoutScope.PermissionDescriptionBody(
                 .padding(top = 8.dp)
                 .fillMaxWidth()
         )
-        Text(
-            text = "Following feature(s) will be used",
-            style = MaterialTheme.typography.body1,
+        PermissionUsageCard()
+    }
+}
+
+@Composable
+private fun PermissionUsageCard() {
+    Card(
+        modifier = Modifier.padding(top = 32.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp)
-        )
+                .padding(all = 16.dp)
+        ) {
+            Text(
+                text = "Following feature(s) will be used",
+                style = MaterialTheme.typography.body1
+            )
 
-        PermissionFeatureBox(
-            title = "• Lock screen",
-            description = "The screen will be locked after the scheduled time by you has elapsed."
-        )
+            PermissionFeatureBox(
+                title = "•  Lock screen",
+                description = "The screen will be locked after the scheduled time by you has elapsed."
+            )
+        }
     }
 }
 
