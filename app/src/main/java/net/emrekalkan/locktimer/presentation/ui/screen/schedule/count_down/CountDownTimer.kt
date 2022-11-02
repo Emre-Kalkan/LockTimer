@@ -8,9 +8,7 @@ typealias TimeAfterTick = (String) -> Unit
 class CountDownTimer : AsyncTimer() {
 
     var afterTick: TimeAfterTick? = null
-
-    val isDone: Boolean
-        get() = remaining == 0L
+    var onComplete: (() -> Unit)? = null
 
     fun startTimer(timeInMillis: Long) {
         if (isActive()) return
@@ -18,6 +16,9 @@ class CountDownTimer : AsyncTimer() {
         onTick = {
             val text = DateFormatter.countDownFormat(it)
             afterTick?.invoke(text)
+        }
+        onDone = {
+            onComplete?.invoke()
         }
         start(timeInMillis)
     }

@@ -8,9 +8,10 @@ abstract class AsyncTimer {
 
     private val timerScope = CoroutineScope(Dispatchers.Main)
     private var timerJob: Job? = null
+    private var remaining: Long = 0
 
-    protected var remaining: Long = 0
-    protected var onTick: (TimerTick)? = null
+    protected var onTick: TimerTick? = null
+    protected var onDone: (() -> Unit)? = null
 
     protected fun start(timeInMillis: Long) {
         if (isActive()) return
@@ -22,6 +23,7 @@ abstract class AsyncTimer {
                 remaining = remaining.minus(SECOND_IN_MILLIS).coerceAtLeast(0L)
                 onTick?.invoke(remaining)
             }
+            onDone?.invoke()
         }
     }
 

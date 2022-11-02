@@ -25,6 +25,11 @@ class CountDownService : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        countDownTimer.clear()
+    }
+
     private fun start(action: CountDownAction.Start) {
         val timeText = action.formattedTimeText
         val notification = countDownNotificationBuilder.createNotification(timeText)
@@ -36,15 +41,9 @@ class CountDownService : LifecycleService() {
         with(countDownTimer) {
             clear()
             startTimer(timeInMillis)
-            afterTick = {
-                countDownNotificationBuilder.notify(it)
-            }
+            afterTick = countDownNotificationBuilder::notify
+            onComplete = ::stopSelf
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        countDownTimer.clear()
     }
 
     companion object {
