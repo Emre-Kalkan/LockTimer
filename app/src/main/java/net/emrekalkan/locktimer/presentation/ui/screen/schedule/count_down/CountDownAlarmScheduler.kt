@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import dagger.hilt.android.qualifiers.ActivityContext
-import net.emrekalkan.locktimer.presentation.util.baseActivity
+import net.emrekalkan.locktimer.presentation.util.extensions.baseActivity
 import net.emrekalkan.locktimer.presentation.util.pendingIntentFlags
 import javax.inject.Inject
 

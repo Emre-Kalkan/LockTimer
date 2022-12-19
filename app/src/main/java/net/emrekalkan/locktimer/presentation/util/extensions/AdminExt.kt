@@ -1,4 +1,4 @@
-package net.emrekalkan.locktimer.presentation.util
+package net.emrekalkan.locktimer.presentation.util.extensions
 
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName

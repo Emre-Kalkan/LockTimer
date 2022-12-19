@@ -1,33 +1,25 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.schedule
 
 import net.emrekalkan.locktimer.presentation.util.DateFormatter
-import net.emrekalkan.locktimer.presentation.util.toIntOrZero
 
-sealed class SchedulerOption {
-    data class SpecificOption(val timeInMinutes: Int) : SchedulerOption()
-    data class CustomOption(val timeInMinutes: Int = 0) : SchedulerOption()
+sealed class SchedulerOption(
+    open val timeInMinutes: Int
+) {
+    data class SpecificOption(override val timeInMinutes: Int) : SchedulerOption(timeInMinutes)
+    data class CustomOption(override val timeInMinutes: Int = 0) : SchedulerOption(timeInMinutes)
 
     val timeInMillis: Long
-        get() = when (this) {
-            // TODO(wtf?)
-            is CustomOption -> DateFormatter.minutesToMillis(timeInMinutes)
-            is SpecificOption -> DateFormatter.minutesToMillis(timeInMinutes)
-        }
-
-    fun isEqual(timeText: String): Boolean {
-        val timeInMinutes = timeText.toIntOrZero()
-        return DateFormatter.minutesToMillis(timeInMinutes) == timeInMillis
-    }
+        get() = DateFormatter.minutesToMillis(timeInMinutes)
 
     companion object {
         val defaults: List<SchedulerOption>
             get() = listOf(
-                SpecificOption(5),
-                SpecificOption(15),
-                SpecificOption(30),
-                SpecificOption(60),
-                SpecificOption(90),
-                CustomOption()
+                SpecificOption(timeInMinutes = 5),
+                SpecificOption(timeInMinutes = 15),
+                SpecificOption(timeInMinutes = 30),
+                SpecificOption(timeInMinutes = 60),
+                SpecificOption(timeInMinutes = 90),
+                CustomOption(timeInMinutes = 0)
             )
     }
 }

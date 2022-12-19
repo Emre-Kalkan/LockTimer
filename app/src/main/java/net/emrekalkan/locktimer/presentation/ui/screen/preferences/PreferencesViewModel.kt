@@ -1,0 +1,58 @@
+package net.emrekalkan.locktimer.presentation.ui.screen.preferences
+
+import android.app.Application
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import net.emrekalkan.locktimer.data.local.PreferenceDataStore
+import net.emrekalkan.locktimer.domain.mapper.PreferenceModelMapper
+import net.emrekalkan.locktimer.presentation.base.BaseViewModel
+import net.emrekalkan.locktimer.presentation.base.State
+import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferencesViewModel.PreferencesUiState
+import net.emrekalkan.locktimer.presentation.util.extensions.isAdminActive
+import javax.inject.Inject
+
+@HiltViewModel
+class PreferencesViewModel @Inject constructor(
+    private val application: Application,
+    private val preferenceDataStore: PreferenceDataStore,
+    private val preferenceModelMapper: PreferenceModelMapper,
+) : BaseViewModel<PreferencesUiState>(PreferencesUiState()) {
+
+    init {
+        getPrefs()
+    }
+
+    private fun getPrefs() {
+        viewModelScope.launch {
+            val prefs = preferenceModelMapper.getPreferencesModels()
+            setState {
+                copy(preferences = prefs)
+            }
+        }
+    }
+
+    fun onBooleanPrefChange(checked: Boolean, model: BooleanPreferenceModel) {
+        if (model.requiresAdmin && application.isAdminActive().not()) {
+
+            return
+        }
+
+        viewModelScope.launch {
+            preferenceDataStore.setPreference(model.key to checked)
+        }
+        setState {
+            val index = preferences.indexOf(model)
+            val updated = model.copy(value = checked)
+            val prefs = mutableListOf<PreferenceModel<*>>().apply {
+                addAll(preferences)
+                set(index, updated)
+            }
+            copy(preferences = prefs)
+        }
+    }
+
+    data class PreferencesUiState(
+        val preferences: List<PreferenceModel<*>> = PreferenceModel.defaults
+    ) : State
+}

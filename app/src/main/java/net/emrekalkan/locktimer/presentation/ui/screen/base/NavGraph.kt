@@ -6,9 +6,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import net.emrekalkan.locktimer.presentation.ui.screen.onboarding.OnBoardingScreen
+import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferenceScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.splash.SplashScreen
-import net.emrekalkan.locktimer.presentation.util.isAdminActive
+import net.emrekalkan.locktimer.presentation.util.extensions.isAdminActive
 
 fun NavGraphBuilder.createNavGraph(
     context: Context,
@@ -40,7 +41,14 @@ fun NavGraphBuilder.createNavGraph(
             )
         }
         composable(ScheduleScreen.route) {
-            ScheduleScreen()
+            ScheduleScreen(
+                navigateToSettings = {
+                    navController.navigate(PreferenceScreen.route)
+                }
+            )
+        }
+        composable(PreferenceScreen.route) {
+            PreferenceScreen()
         }
     }
 }

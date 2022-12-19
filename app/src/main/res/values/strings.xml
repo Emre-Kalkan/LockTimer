@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Lock Timer</string>
-    <string name="admin_receiver_label" translatable="false">Admin Receiver Label</string>
-    <string name="admin_receiver_description" translatable="false">Admin Receiver Description because why not...</string>
+    <string name="admin_receiver_label">Admin Receiver Label</string>
+    <string name="admin_receiver_description">Admin Receiver Description because why not…</string>
+    <string name="pref_title_lock_screen">Lock screen</string>
+    <string name="pref_title_stop_audio">Stop audio/video</string>
+    <string name="pref_title_disable_bluetooth">Disable bluetooth</string>
+    <string name="pref_title_disable_wifi">Disable wifi</string>
+    <string name="pref_title_disable_cellular_data">Disable cellular data</string>
 </resources>

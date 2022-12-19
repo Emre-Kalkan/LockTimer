@@ -1,24 +1,18 @@
-@file:OptIn(ExperimentalAnimationApi::class)
-
 package net.emrekalkan.locktimer.presentation.ui.screen.schedule
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,19 +23,20 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import net.emrekalkan.locktimer.R
+import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleViewModel.ScheduleUiState
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.CustomOption
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.SpecificOption
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down.CountDownService
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
-import kotlin.math.round
+import net.emrekalkan.locktimer.presentation.util.extensions.orZero
 
 object ScheduleScreen : Screen(name = "ScheduleScreen")
 
@@ -53,7 +48,8 @@ private fun ScheduleScreenPreview() {
             ScheduleScreenContent(
                 uiState = ScheduleUiState(),
                 scheduleClicked = {},
-                optionSelected = {}
+                optionSelected = {},
+                navigateToPreferences = {}
             )
         }
     }
@@ -61,13 +57,15 @@ private fun ScheduleScreenPreview() {
 
 @Composable
 fun ScheduleScreen(
-    viewModel: ScheduleViewModel = hiltViewModel()
+    viewModel: ScheduleViewModel = hiltViewModel(),
+    navigateToSettings: () -> Unit
 ) {
     val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState()
 
     ScheduleScreenContent(
-        uiState.value,
+        modifier = Modifier.fillMaxSize(),
+        uiState = uiState.value,
         scheduleClicked = {
             run {
                 val action = viewModel.getCountDownAction() ?: return@run
@@ -76,24 +74,40 @@ fun ScheduleScreen(
                 context.startService(serviceIntent)
             }
         },
-        optionSelected = viewModel::onOptionClicked
+        optionSelected = viewModel::onOptionClicked,
+        navigateToPreferences = navigateToSettings
     )
 }
 
 @Composable
 private fun ScheduleScreenContent(
+    modifier: Modifier = Modifier,
     uiState: ScheduleUiState,
     scheduleClicked: () -> Unit,
-    optionSelected: (SchedulerOption) -> Unit
+    optionSelected: (SchedulerOption) -> Unit,
+    navigateToPreferences: () -> Unit
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    val scrollState = rememberScrollState()
+
+    Column(modifier = modifier) {
         Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(scrollState)
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
+            Toolbar(
+                backButton = false,
+                title = "",
+                actions = {
+                    Icon(
+                        modifier = Modifier.clickable { navigateToPreferences() },
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "",
+                        tint = MaterialTheme.colors.onPrimary
+                    )
+                }
+            )
             Header()
             Spacer(modifier = Modifier.height(32.dp))
             OptionsList(
@@ -102,14 +116,14 @@ private fun ScheduleScreenContent(
                 selectedOption = uiState.selectedOption,
                 optionSelected = optionSelected
             )
-
-            Spacer(modifier = Modifier.padding(top = 16.dp))
-            ScheduleButton(
-                modifier = Modifier,
-                enabled = uiState.selectedOption != null,
-                scheduleClicked = scheduleClicked
-            )
         }
+
+        Spacer(modifier = Modifier.padding(top = 16.dp))
+        ScheduleButton(
+            modifier = Modifier,
+            enabled = uiState.selectedOption != null,
+            scheduleClicked = scheduleClicked
+        )
     }
 }
 
@@ -126,15 +140,15 @@ private fun Header(
             painter = painterResource(id = R.drawable.ic_lock),
             contentDescription = "",
             modifier = Modifier
-                .size(96.dp)
+                .size(72.dp)
         )
         Text(
             text = "Pick a time",
-            style = typography.h3
+            style = typography.h4
         )
         Text(
             text = "in minutes",
-            style = typography.h5,
+            style = typography.h6,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
         )
@@ -148,8 +162,6 @@ private fun OptionsList(
     selectedOption: SchedulerOption?,
     optionSelected: (SchedulerOption) -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -157,8 +169,8 @@ private fun OptionsList(
         shape = RoundedCornerShape(16.dp)
     ) {
         if (options.isNotEmpty()) {
-            LazyColumn(state = lazyListState) {
-                itemsIndexed(options) { index, option ->
+            Column {
+                options.forEachIndexed { index, option ->
                     when (option) {
                         is SpecificOption -> SpecificOptionContent(option, selectedOption, optionSelected)
                         is CustomOption -> CustomOptionContent(option, selectedOption, optionSelected)
@@ -181,14 +193,12 @@ private fun ScheduleButton(
 ) {
     Button(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxWidth(),
         onClick = { scheduleClicked() },
-        enabled = enabled
+        enabled = enabled,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Schedule Now", style = typography.button)
-        }
+        Text(text = "Schedule Now", style = typography.button, modifier = Modifier.padding(vertical = 8.dp))
     }
 }
 
@@ -237,7 +247,7 @@ private fun SpecificOptionContent(
 @Composable
 private fun CustomOptionContent(
     option: CustomOption = CustomOption(),
-    selectedOption: SchedulerOption? = CustomOption(),
+    selectedOption: SchedulerOption? = null,
     optionSelected: (SchedulerOption) -> Unit = {}
 ) {
     Row(
@@ -246,13 +256,18 @@ private fun CustomOptionContent(
             .fillMaxWidth()
             .height(64.dp)
     ) {
-        var textState by remember { mutableStateOf("") }
-        val isSelected = option.javaClass == selectedOption?.let { it::class.java } && selectedOption.isEqual(textState)
+        val selectedCustomOption = selectedOption as? CustomOption
+        var textState by remember { mutableStateOf(option.timeInMinutes) }
+        val isSelected = selectedCustomOption?.timeInMinutes.orZero<Int>() > 0
 
         ScheduleTextField(
             modifier = Modifier.weight(1f),
-            text = textState,
-            onValueChange = { textState = it },
+            minutes = textState,
+            onValueChange = { value ->
+                if (value.isDigitsOnly()) {
+                    textState = value.toIntOrNull().orZero()
+                }
+            },
             onDone = { selectCustomOption(textState, option, optionSelected) }
         )
         if (isSelected) {
@@ -267,7 +282,7 @@ private fun CustomOptionContent(
 
 @Composable
 fun ScheduleTextField(
-    text: String,
+    minutes: Int,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = "Custom",
@@ -275,6 +290,7 @@ fun ScheduleTextField(
 ) {
     val focusManager = LocalFocusManager.current
     val focused = remember { mutableStateOf(false) }
+    val text = minutes.takeIf { it > 0 }?.toString() ?: ""
 
     TextField(
         modifier = modifier
@@ -283,7 +299,7 @@ fun ScheduleTextField(
         onValueChange = onValueChange,
         singleLine = true,
         placeholder = {
-            if (focused.value.not()) {
+            if (text.isEmpty() && focused.value.not()) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = hint,
@@ -314,8 +330,10 @@ fun ScheduleTextField(
     )
 }
 
-private fun selectCustomOption(text: String, option: CustomOption, optionSelected: (SchedulerOption) -> Unit) {
-    val timeInMinutes = round(text.toDouble()).toInt().coerceAtLeast(1)
+private fun selectCustomOption(minutes: Int, option: CustomOption, optionSelected: (SchedulerOption) -> Unit) {
+    if (minutes < 1) return
+
+    val timeInMinutes = minutes.coerceAtLeast(1)
     val customOption = option.copy(timeInMinutes = timeInMinutes)
     optionSelected(customOption)
 }

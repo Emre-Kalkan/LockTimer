@@ -1,4 +1,4 @@
-package net.emrekalkan.locktimer.presentation.util
+package net.emrekalkan.locktimer.presentation.util.extensions
 
 import kotlinx.coroutines.*
 
