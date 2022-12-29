@@ -1,10 +1,8 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.base
 
 import android.content.Context
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
+import androidx.navigation.*
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import net.emrekalkan.locktimer.presentation.ui.screen.onboarding.OnBoardingScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferenceScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleScreen
@@ -15,40 +13,49 @@ fun NavGraphBuilder.createNavGraph(
     context: Context,
     navController: NavController
 ) {
-    navigation(startDestination = SplashScreen.route, route = LockTimerRoute) {
-        composable(SplashScreen.route) {
+    navigation(startDestination = SplashScreen.routeFormula, route = LockTimerRoute) {
+        composable(SplashScreen.routeFormula) {
             SplashScreen(
-                isAdmin = context.isAdminActive(),
-                navigateToOnBoarding = {
-                    navController.navigate(OnBoardingScreen.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                },
                 navigateToSchedule = {
-                    navController.navigate(ScheduleScreen.route) {
-                        popUpTo(0) { inclusive = true }
+                    navController.navigate(ScheduleScreen.routeFormula) {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
                     }
                 }
             )
         }
-        composable(OnBoardingScreen.route) {
+        composable(
+            OnBoardingScreen.routeFormula,
+            arguments = listOf(
+                navArgument(OnBoardingScreen.ARG_BACK_ROUTE) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
             OnBoardingScreen(
-                navigateToSchedule = {
-                    navController.navigate(ScheduleScreen.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
+                onBackButtonClick = {
+                    navController.popBackStack()
                 }
             )
         }
-        composable(ScheduleScreen.route) {
+        composable(ScheduleScreen.routeFormula) {
             ScheduleScreen(
                 navigateToSettings = {
-                    navController.navigate(PreferenceScreen.route)
+                    navController.navigate(PreferenceScreen.routeFormula)
                 }
             )
         }
-        composable(PreferenceScreen.route) {
-            PreferenceScreen()
+        composable(PreferenceScreen.routeFormula) {
+            PreferenceScreen(
+                navigateToOnBoarding = {
+                    val route = OnBoardingScreen.getRoute(PreferenceScreen.routeName)
+                    navController.navigate(route)
+                },
+                onBackButtonClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

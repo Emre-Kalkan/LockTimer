@@ -38,7 +38,7 @@ import net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down.Count
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 import net.emrekalkan.locktimer.presentation.util.extensions.orZero
 
-object ScheduleScreen : Screen(name = "ScheduleScreen")
+object ScheduleScreen : Screen(routeName = "ScheduleScreen")
 
 @Preview
 @Composable

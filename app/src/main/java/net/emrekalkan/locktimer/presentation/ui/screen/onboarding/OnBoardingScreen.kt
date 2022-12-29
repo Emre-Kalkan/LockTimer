@@ -17,10 +17,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
 import net.emrekalkan.locktimer.R
+import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 
-object OnBoardingScreen : Screen(name = "OnBoardingScreen")
+object OnBoardingScreen : Screen(routeName = "OnBoardingScreen") {
+    const val ARG_BACK_ROUTE = "backRoute"
+
+    override val args: List<String>
+        get() = listOf(ARG_BACK_ROUTE)
+
+    fun getRoute(backRoute: String): String {
+        return "$routeName/$backRoute"
+    }
+}
 
 @Preview
 @Composable
@@ -32,15 +42,15 @@ fun OnBoardingScreenPreview() {
 
 @Composable
 fun OnBoardingScreen(
-    navigateToSchedule: () -> Unit
+    onBackButtonClick: OnBackButtonClick
 ) {
     val context = LocalContext.current
     val adminComponent = ComponentName(context, LockScreenAdminReceiver::class.java)
     val adminRequestLauncher = rememberLauncherForActivityResult(
         contract = AddAdminDeviceContract(),
-        onResult = {
-            if (it) {
-                navigateToSchedule()
+        onResult = { isAdmin ->
+            if (isAdmin) {
+                onBackButtonClick()
             }
         }
     )

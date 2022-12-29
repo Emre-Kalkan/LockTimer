@@ -1,5 +1,6 @@
 package net.emrekalkan.locktimer.presentation.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -16,10 +17,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 
+typealias OnBackButtonClick = () -> Unit
+
 @Composable
 fun Toolbar(
     backButton: Boolean = true,
     title: String = "",
+    onBackButtonClick: OnBackButtonClick = {},
     actions: @Composable () -> Unit = {}
 ) {
     Row(
@@ -32,7 +36,8 @@ fun Toolbar(
         if (backButton) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
-                contentDescription = ""
+                contentDescription = "",
+                modifier = Modifier.clickable { onBackButtonClick() }
             )
         }
         Text(

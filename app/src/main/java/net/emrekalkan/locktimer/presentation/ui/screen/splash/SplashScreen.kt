@@ -24,8 +24,6 @@ fun SplashScreenPreview() {
 
 @Composable
 fun SplashScreen(
-    isAdmin: Boolean,
-    navigateToOnBoarding: () -> Unit,
     navigateToSchedule: () -> Unit,
 ) {
     SplashScreenContent()
@@ -33,11 +31,7 @@ fun SplashScreen(
     LaunchedEffect(key1 = Unit, block = {
         scope.launch {
             delay(1000)
-            if (isAdmin) {
-                navigateToSchedule()
-            } else {
-                navigateToOnBoarding()
-            }
+            navigateToSchedule()
         }
     })
 }

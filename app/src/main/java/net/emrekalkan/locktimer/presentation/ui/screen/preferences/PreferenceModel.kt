@@ -21,7 +21,7 @@ sealed class PreferenceModel<T>(
 
         val defaults: List<PreferenceModel<*>>
             get() = listOf(
-                BooleanPreferenceModel(key = PREF_LOCK_SCREEN, titleRes = R.string.pref_title_lock_screen, requiresAdmin = true, value = true),
+                BooleanPreferenceModel(key = PREF_LOCK_SCREEN, titleRes = R.string.pref_title_lock_screen, requiresAdmin = true),
                 BooleanPreferenceModel(key = PREF_STOP_AUDIO_VIDEO, titleRes = R.string.pref_title_stop_audio, value = true),
                 BooleanPreferenceModel(key = PREF_DISABLE_BLUETOOTH, titleRes = R.string.pref_title_disable_bluetooth),
                 BooleanPreferenceModel(key = PREF_DISABLE_WIFI, titleRes = R.string.pref_title_disable_wifi),

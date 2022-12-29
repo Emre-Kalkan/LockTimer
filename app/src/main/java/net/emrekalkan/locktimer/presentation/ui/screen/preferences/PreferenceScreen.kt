@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,12 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferencesViewModel.PreferencesUiState
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 
-object PreferenceScreen : Screen(name = "PreferenceScreen")
+object PreferenceScreen : Screen(routeName = "PreferenceScreen")
 
 private typealias CheckChange = (Boolean, BooleanPreferenceModel) -> Unit
 
@@ -33,28 +35,40 @@ private typealias CheckChange = (Boolean, BooleanPreferenceModel) -> Unit
 private fun PreferenceScreenPreview() {
     LockTimerTheme {
         Surface {
-            PreferenceScreenContent(
-                uiState = PreferencesUiState(),
-                checkChange = { _, _ -> }
-            )
+            PreferenceScreenContent()
         }
     }
 }
 
 @Composable
 fun PreferenceScreen(
-    viewModel: PreferencesViewModel = hiltViewModel()
+    viewModel: PreferencesViewModel = hiltViewModel(),
+    navigateToOnBoarding: () -> Unit,
+    onBackButtonClick: OnBackButtonClick
 ) {
+    LaunchedEffect(key1 = Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                PreferencesViewModel.PreferencesEvent.NavigateToOnBoarding -> navigateToOnBoarding()
+            }
+        }
+    }
+
     val uiState = viewModel.uiState.collectAsState()
 
     PreferenceScreenContent(
         uiState = uiState.value,
-        checkChange = { checked, model -> viewModel.onBooleanPrefChange(checked, model) }
+        checkChange = { checked, model -> viewModel.onBooleanPrefChange(checked, model) },
+        onBackButtonClick = onBackButtonClick
     )
 }
 
 @Composable
-private fun PreferenceScreenContent(uiState: PreferencesUiState, checkChange: CheckChange) {
+private fun PreferenceScreenContent(
+    uiState: PreferencesUiState = PreferencesUiState(),
+    checkChange: CheckChange = { _, _ -> },
+    onBackButtonClick: OnBackButtonClick = {}
+) {
     val scrollState = rememberScrollState()
 
     Column(
@@ -63,7 +77,9 @@ private fun PreferenceScreenContent(uiState: PreferencesUiState, checkChange: Ch
             .scrollable(scrollState, Orientation.Vertical),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Toolbar()
+        Toolbar(
+            onBackButtonClick = onBackButtonClick
+        )
         Header()
         Preferences(preferenceModels = uiState.preferences, checkChange = checkChange)
     }
