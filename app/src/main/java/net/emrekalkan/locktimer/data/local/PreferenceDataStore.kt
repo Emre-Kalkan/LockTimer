@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import net.emrekalkan.locktimer.domain.model.PreferenceModel
 
 class PreferenceDataStore(
     private val context: Context
@@ -16,7 +15,7 @@ class PreferenceDataStore(
     val data: Flow<Preferences>
         get() = context.dataStore.data
 
-    suspend fun setPreference(pair: Preferences.Pair<Boolean>) {
+    suspend fun setPreference(pair: Preferences.Pair<*>) {
         context.dataStore.edit { preferences ->
             preferences.putAll(pair)
         }
@@ -24,11 +23,7 @@ class PreferenceDataStore(
 
     @Suppress("UNCHECKED_CAST")
     suspend fun <T> getPreference(key: Preferences.Key<T>): T? {
-        val result = data.firstOrNull()?.get(key)
-
-        result?.let { return it }
-
-        return PreferenceModel.defaults.find { it.key == key }?.value as? T
+        return data.firstOrNull()?.get(key)
     }
 
     companion object {

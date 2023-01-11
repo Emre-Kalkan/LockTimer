@@ -4,10 +4,10 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import net.emrekalkan.locktimer.data.local.PreferenceDataStore
-import net.emrekalkan.locktimer.domain.mapper.PreferenceModelMapper
 import net.emrekalkan.locktimer.domain.model.PreferenceModel
 import net.emrekalkan.locktimer.domain.model.TimerActionPreferenceModel
+import net.emrekalkan.locktimer.domain.usecase.GetAvailablePreferences
+import net.emrekalkan.locktimer.domain.usecase.SetDataStorePreference
 import net.emrekalkan.locktimer.presentation.base.BaseViewModel
 import net.emrekalkan.locktimer.presentation.base.Event
 import net.emrekalkan.locktimer.presentation.base.State
@@ -19,8 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
     private val application: Application,
-    private val preferenceDataStore: PreferenceDataStore,
-    private val preferenceModelMapper: PreferenceModelMapper,
+    private val setDataStorePreference: SetDataStorePreference,
+    private val getAvailablePreferences: GetAvailablePreferences,
 ) : BaseViewModel<PreferencesUiState, PreferencesEvent>(PreferencesUiState()) {
 
     init {
@@ -29,7 +29,7 @@ class PreferencesViewModel @Inject constructor(
 
     private fun getPrefs() {
         viewModelScope.launch {
-            val prefs = preferenceModelMapper.getPreferencesModels()
+            val prefs = getAvailablePreferences()
             setState {
                 copy(preferences = prefs)
             }
@@ -40,7 +40,7 @@ class PreferencesViewModel @Inject constructor(
         if (shouldRequireAdminPermission(model)) return
 
         viewModelScope.launch {
-            preferenceDataStore.setPreference(model.key to checked)
+            setDataStorePreference(model.key to checked)
         }
         setState {
             val prefs = preferences.updateModel(checked, model)
@@ -71,7 +71,7 @@ class PreferencesViewModel @Inject constructor(
     }
 
     data class PreferencesUiState(
-        val preferences: List<PreferenceModel<*>> = PreferenceModel.defaults,
+        val preferences: List<PreferenceModel<*>> = emptyList(),
     ) : State
 
     sealed class PreferencesEvent : Event {

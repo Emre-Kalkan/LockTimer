@@ -1,19 +1,20 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions
 
 import androidx.datastore.preferences.core.Preferences
-import net.emrekalkan.locktimer.data.local.PreferenceDataStore
 import net.emrekalkan.locktimer.domain.model.TimerActionPreferenceModel
+import net.emrekalkan.locktimer.domain.model.TimerActionType
+import net.emrekalkan.locktimer.domain.usecase.GetAvailablePreferences
 import javax.inject.Inject
 
 class TimerActionPerformer @Inject constructor(
-    private val preferenceDataStore: PreferenceDataStore,
+    private val getAvailablePreferences: GetAvailablePreferences,
     private val timerActions: List<@JvmSuppressWildcards TimerAction>
 ) {
 
     suspend fun perform() {
-        TimerActionPreferenceModel.defaults.forEach { preferenceModel ->
-            val enabled = preferenceDataStore.getPreference(preferenceModel.key) ?: false
-            if (enabled.not()) return@forEach
+        getAvailablePreferences().forEach { preferenceModel ->
+            val model = preferenceModel as? TimerActionPreferenceModel ?: return@forEach
+            if (model.value.not()) return@forEach
             val action = findAction(preferenceModel.key) ?: return@forEach
 
             action.perform()
@@ -22,9 +23,9 @@ class TimerActionPerformer @Inject constructor(
 
     private fun findAction(preferenceKey: Preferences.Key<*>): TimerAction? {
         val actionClass = when (preferenceKey) {
-            TimerActionPreferenceModel.PREF_LOCK_SCREEN -> LockScreenAction::class.java
-            TimerActionPreferenceModel.PREF_STOP_AUDIO_VIDEO -> StopAudioVideoAction::class.java
-            TimerActionPreferenceModel.PREF_DISABLE_BLUETOOTH -> DisableBluetoothAction::class.java
+            TimerActionType.PREF_LOCK_SCREEN.key -> LockScreenAction::class.java
+            TimerActionType.PREF_STOP_AUDIO_VIDEO.key -> StopAudioVideoAction::class.java
+            TimerActionType.PREF_DISABLE_BLUETOOTH.key -> DisableBluetoothAction::class.java
             else -> return null
         }
 

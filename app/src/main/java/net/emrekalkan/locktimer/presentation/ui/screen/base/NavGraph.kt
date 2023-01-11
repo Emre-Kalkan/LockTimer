@@ -1,16 +1,13 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.base
 
-import android.content.Context
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import net.emrekalkan.locktimer.presentation.ui.screen.onboarding.OnBoardingScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferenceScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.splash.SplashScreen
-import net.emrekalkan.locktimer.presentation.util.extensions.isAdminActive
 
 fun NavGraphBuilder.createNavGraph(
-    context: Context,
     navController: NavController
 ) {
     navigation(startDestination = SplashScreen.routeFormula, route = LockTimerRoute) {

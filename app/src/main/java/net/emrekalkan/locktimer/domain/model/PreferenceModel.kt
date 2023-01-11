@@ -7,12 +7,4 @@ sealed class PreferenceModel<T>(
     open val key: Preferences.Key<Boolean>,
     @StringRes open val titleRes: Int,
     open val value: T?
-) {
-
-    companion object {
-        val defaults: List<PreferenceModel<*>>
-            get() = buildList {
-                addAll(TimerActionPreferenceModel.defaults)
-            }
-    }
-}
+)
