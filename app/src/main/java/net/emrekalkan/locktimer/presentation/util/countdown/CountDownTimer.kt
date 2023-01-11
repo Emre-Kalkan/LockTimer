@@ -1,4 +1,4 @@
-package net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down
+package net.emrekalkan.locktimer.presentation.util.countdown
 
 import net.emrekalkan.locktimer.presentation.util.DateFormatter
 import net.emrekalkan.locktimer.presentation.util.extensions.AsyncTimer

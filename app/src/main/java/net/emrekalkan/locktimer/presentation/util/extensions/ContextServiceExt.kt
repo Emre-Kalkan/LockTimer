@@ -4,8 +4,12 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.net.Uri
 import net.emrekalkan.locktimer.presentation.ui.screen.onboarding.LockScreenAdminReceiver
+
+val Context.audioManager: AudioManager
+    get() = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
 val Context.adminComponent: ComponentName
     get() = ComponentName(this, LockScreenAdminReceiver::class.java)

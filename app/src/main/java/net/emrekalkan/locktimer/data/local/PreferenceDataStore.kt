@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferenceModel
+import net.emrekalkan.locktimer.domain.model.PreferenceModel
 
 class PreferenceDataStore(
     private val context: Context

@@ -6,6 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import net.emrekalkan.locktimer.data.local.PreferenceDataStore
 import net.emrekalkan.locktimer.domain.mapper.PreferenceModelMapper
+import net.emrekalkan.locktimer.domain.model.PreferenceModel
+import net.emrekalkan.locktimer.domain.model.TimerActionPreferenceModel
 import net.emrekalkan.locktimer.presentation.base.BaseViewModel
 import net.emrekalkan.locktimer.presentation.base.Event
 import net.emrekalkan.locktimer.presentation.base.State
@@ -34,15 +36,8 @@ class PreferencesViewModel @Inject constructor(
         }
     }
 
-    fun onBooleanPrefChange(checked: Boolean, model: BooleanPreferenceModel) {
-        if (model.requiresAdmin && application.isAdminActive().not()) {
-            setState {
-                val prefs = preferences.updateModel(checked = false, model)
-                copy(preferences = prefs)
-            }
-            setEvent { PreferencesEvent.NavigateToOnBoarding }
-            return
-        }
+    fun onBooleanPrefChange(checked: Boolean, model: TimerActionPreferenceModel) {
+        if (shouldRequireAdminPermission(model)) return
 
         viewModelScope.launch {
             preferenceDataStore.setPreference(model.key to checked)
@@ -53,7 +48,20 @@ class PreferencesViewModel @Inject constructor(
         }
     }
 
-    private fun List<PreferenceModel<*>>.updateModel(checked: Boolean, model: BooleanPreferenceModel): MutableList<PreferenceModel<*>> {
+    private fun shouldRequireAdminPermission(model: TimerActionPreferenceModel): Boolean {
+        return if (model.requiresAdmin && application.isAdminActive().not()) {
+            setState {
+                val prefs = preferences.updateModel(checked = false, model)
+                copy(preferences = prefs)
+            }
+            setEvent { PreferencesEvent.NavigateToOnBoarding }
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun List<PreferenceModel<*>>.updateModel(checked: Boolean, model: TimerActionPreferenceModel): MutableList<PreferenceModel<*>> {
         val index = indexOf(model)
         val updated = model.copy(value = checked)
         return mutableListOf<PreferenceModel<*>>().apply {
@@ -63,7 +71,7 @@ class PreferencesViewModel @Inject constructor(
     }
 
     data class PreferencesUiState(
-        val preferences: List<PreferenceModel<*>> = PreferenceModel.defaults
+        val preferences: List<PreferenceModel<*>> = PreferenceModel.defaults,
     ) : State
 
     sealed class PreferencesEvent : Event {

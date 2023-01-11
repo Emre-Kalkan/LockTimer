@@ -1,4 +1,4 @@
-package net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down
+package net.emrekalkan.locktimer.presentation.util.countdown
 
 import android.app.Notification
 import android.app.NotificationChannel

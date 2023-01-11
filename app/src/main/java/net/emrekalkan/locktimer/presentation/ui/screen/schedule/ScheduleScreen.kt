@@ -34,8 +34,8 @@ import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleViewModel.ScheduleUiState
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.CustomOption
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.SpecificOption
-import net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down.CountDownService
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
+import net.emrekalkan.locktimer.presentation.util.countdown.CountDownService
 import net.emrekalkan.locktimer.presentation.util.extensions.orZero
 
 object ScheduleScreen : Screen(routeName = "ScheduleScreen")

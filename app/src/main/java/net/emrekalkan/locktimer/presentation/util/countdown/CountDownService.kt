@@ -1,10 +1,13 @@
-package net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down
+package net.emrekalkan.locktimer.presentation.util.countdown
 
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down.CountDownNotificationBuilder.Companion.NOTIFICATION_ID
+import kotlinx.coroutines.launch
+import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.TimerActionPerformer
+import net.emrekalkan.locktimer.presentation.util.countdown.CountDownNotificationBuilder.Companion.NOTIFICATION_ID
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -15,6 +18,9 @@ class CountDownService : LifecycleService() {
 
     @Inject
     lateinit var countDownTimer: CountDownTimer
+
+    @Inject
+    lateinit var timerActionPerformer: TimerActionPerformer
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (val action = intent?.getParcelableExtra<CountDownAction>(KEY_ACTION)) {
@@ -42,7 +48,12 @@ class CountDownService : LifecycleService() {
             clear()
             startTimer(timeInMillis)
             afterTick = countDownNotificationBuilder::notify
-            onComplete = ::stopSelf
+            onComplete = {
+                lifecycleScope.launch {
+                    timerActionPerformer.perform()
+                    stopSelf()
+                }
+            }
         }
     }
 

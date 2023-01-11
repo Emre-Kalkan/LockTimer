@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import net.emrekalkan.locktimer.data.local.PreferenceDataStore
-import net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down.CountDownTimer
+import net.emrekalkan.locktimer.presentation.util.countdown.CountDownTimer
 import javax.inject.Singleton
 
 @Module

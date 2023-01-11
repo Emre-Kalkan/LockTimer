@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package net.emrekalkan.locktimer.presentation.util.composables
 
 import androidx.compose.foundation.background
@@ -12,62 +14,53 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
-import net.emrekalkan.locktimer.presentation.util.Text
-
-data class DialogParams(
-    val title: Text,
-    val description: Text,
-    val positive: Pair<Int, () -> Unit>,
-    val neutral: Pair<Int, () -> Unit>? = null,
-    val negative: Pair<Int, () -> Unit>? = null
-)
-
-typealias OnDismiss = () -> Unit
 
 @Composable
-fun Dialog(
-    params: DialogParams,
-    onDismissRequest: () -> Unit = {}
+fun BottomSheet(
+    state: ModalBottomSheetState,
+    content: @Composable ColumnScope.() -> Unit
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
-        DialogContent(params = params)
-    }
+    ModalBottomSheetLayout(
+        sheetState = state,
+        scrimColor = MaterialTheme.colors.background.copy(alpha = 0.32f),
+        sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
+        sheetContent = { content() }
+    ) { }
 }
 
-@Composable
 @Preview
-private fun DialogContentPreview() {
+@Composable
+fun BottomSheetPreview() {
+    val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded)
     LockTimerTheme {
-        Surface {
-            val params = DialogParams(
-                title = Text.Res(textRes = R.string.admin_receiver_label),
-                description = Text.Res(
-                    textRes = R.string.admin_receiver_description
-                ),
-                positive = R.string.app_name to {}
+        Surface(modifier = Modifier.fillMaxSize()) {
+            BottomSheet(
+                state = state,
+                params = DialogParams(
+                    title = net.emrekalkan.locktimer.presentation.util.Text.Res(textRes = R.string.admin_receiver_label),
+                    description = net.emrekalkan.locktimer.presentation.util.Text.Res(
+                        textRes = R.string.admin_receiver_description
+                    ),
+                    positive = R.string.app_name to {}
+                )
             )
-            DialogContent(params)
         }
     }
 }
 
 @Composable
-private fun DialogContent(
+fun BottomSheet(
+    state: ModalBottomSheetState,
     params: DialogParams
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Transparent)
-    ) {
-        Card(
+    BottomSheet(state = state) {
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .defaultMinSize(minHeight = 72.dp),
-            shape = RoundedCornerShape(16.dp)
+                .fillMaxWidth()
+                .background(Color.Transparent)
         ) {
             Column(
                 modifier = Modifier

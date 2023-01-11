@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <application
         android:name=".presentation.LockTimerApp"
@@ -42,9 +45,9 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.ui.screen.schedule.count_down.CountDownAlarmReceiver" />
+        <receiver android:name=".presentation.util.countdown.CountDownAlarmReceiver" />
 
-        <service android:name=".presentation.ui.screen.schedule.count_down.CountDownService" />
+        <service android:name=".presentation.util.countdown.CountDownService" />
 
     </application>
 

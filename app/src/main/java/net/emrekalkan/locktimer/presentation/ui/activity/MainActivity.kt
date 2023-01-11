@@ -6,7 +6,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import dagger.hilt.android.AndroidEntryPoint
 import net.emrekalkan.locktimer.presentation.base.BaseActivity
-import net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down.CountDownAlarmScheduler
+import net.emrekalkan.locktimer.presentation.util.countdown.CountDownAlarmScheduler
 import net.emrekalkan.locktimer.presentation.ui.screen.base.LockTimer
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 import javax.inject.Inject

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package net.emrekalkan.locktimer.presentation.ui.screen.preferences
 
 import androidx.compose.foundation.gestures.Orientation
@@ -9,9 +11,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,15 +20,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.*
+import net.emrekalkan.locktimer.domain.model.PreferenceModel
+import net.emrekalkan.locktimer.domain.model.TimerActionPreferenceModel
 import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferencesViewModel.PreferencesUiState
+import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.TimerActionPermissionDialog
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 
 object PreferenceScreen : Screen(routeName = "PreferenceScreen")
 
-private typealias CheckChange = (Boolean, BooleanPreferenceModel) -> Unit
+private typealias CheckChange = (Boolean, TimerActionPreferenceModel) -> Unit
 
 @Preview
 @Composable
@@ -111,7 +115,7 @@ private fun Preferences(preferenceModels: List<PreferenceModel<*>>, checkChange:
         LazyColumn(state = lazyListState) {
             itemsIndexed(preferenceModels) { index, item ->
                 when (item) {
-                    is BooleanPreferenceModel -> BooleanPreferenceItem(item, checkChange)
+                    is TimerActionPreferenceModel -> BooleanPreferenceItem(item, checkChange)
                 }
 
                 if (index < preferenceModels.lastIndex) {
@@ -123,7 +127,19 @@ private fun Preferences(preferenceModels: List<PreferenceModel<*>>, checkChange:
 }
 
 @Composable
-private fun BooleanPreferenceItem(model: BooleanPreferenceModel, checkChange: CheckChange) {
+private fun BooleanPreferenceItem(model: TimerActionPreferenceModel, checkChange: CheckChange) {
+    val multiplePermissionState = rememberMultiplePermissionsState(permissions = model.actionPermission?.permissions.orEmpty())
+    val multiplePermissionDialogVisible = remember { mutableStateOf(false) }
+
+    if (multiplePermissionDialogVisible.value && multiplePermissionState.revokedPermissions.isNotEmpty()) {
+        TimerActionPermissionDialog(
+            revokedPermissions = multiplePermissionState.revokedPermissions,
+            onDismiss = {
+                multiplePermissionDialogVisible.value = false
+            }
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -138,7 +154,11 @@ private fun BooleanPreferenceItem(model: BooleanPreferenceModel, checkChange: Ch
         Switch(
             checked = model.value,
             onCheckedChange = { isChecked ->
-                checkChange(isChecked, model)
+                when {
+                    multiplePermissionState.shouldShowRationale -> multiplePermissionDialogVisible.value = true
+                    isChecked && multiplePermissionState.allPermissionsGranted.not() -> multiplePermissionState.launchMultiplePermissionRequest()
+                    else -> checkChange(isChecked, model)
+                }
             }
         )
     }

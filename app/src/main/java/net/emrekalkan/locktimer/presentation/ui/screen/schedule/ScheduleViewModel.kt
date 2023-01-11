@@ -5,7 +5,7 @@ import net.emrekalkan.locktimer.presentation.base.Event
 import net.emrekalkan.locktimer.presentation.base.State
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleViewModel.ScheduleEvent
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleViewModel.ScheduleUiState
-import net.emrekalkan.locktimer.presentation.ui.screen.schedule.count_down.CountDownAction
+import net.emrekalkan.locktimer.presentation.util.countdown.CountDownAction
 
 class ScheduleViewModel : BaseViewModel<ScheduleUiState, ScheduleEvent>(ScheduleUiState()) {
 
