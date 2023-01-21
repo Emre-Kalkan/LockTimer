@@ -44,8 +44,10 @@ object PreferenceModule {
 
     @Singleton
     @Provides
-    fun provideDisableBluetoothAvailability(): DisableBluetoothAvailability {
-        return DisableBluetoothAvailability()
+    fun provideDisableBluetoothAvailability(
+        @ApplicationContext context: Context
+    ): DisableBluetoothAvailability {
+        return DisableBluetoothAvailability(context)
     }
 
     @Singleton

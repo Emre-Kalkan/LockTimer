@@ -1,12 +1,12 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions
 
 import android.Manifest
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import net.emrekalkan.locktimer.presentation.util.extensions.getBluetoothAdapter
 import javax.inject.Inject
 
 class DisableBluetoothAction @Inject constructor(
@@ -18,9 +18,9 @@ class DisableBluetoothAction @Inject constructor(
             if (isBluetoothPermissionGranted.not()) return
         }
 
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if (bluetoothAdapter.isEnabled) {
-            bluetoothAdapter.disable()
+        val adapter = context.getBluetoothAdapter() ?: return
+        if (adapter.isEnabled) {
+            adapter.disable()
         }
     }
 }
