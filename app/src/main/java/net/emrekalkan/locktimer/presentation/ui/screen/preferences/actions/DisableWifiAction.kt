@@ -14,7 +14,7 @@ class DisableWifiAction @Inject constructor(
     override fun perform() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) return
 
-        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager ?: return
         if (wifiManager.isWifiEnabled) {
             wifiManager.isWifiEnabled = false
         }

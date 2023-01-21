@@ -26,6 +26,7 @@ class TimerActionPerformer @Inject constructor(
             TimerActionType.PREF_LOCK_SCREEN.key -> LockScreenAction::class.java
             TimerActionType.PREF_STOP_AUDIO_VIDEO.key -> StopAudioVideoAction::class.java
             TimerActionType.PREF_DISABLE_BLUETOOTH.key -> DisableBluetoothAction::class.java
+            TimerActionType.PREF_DISABLE_WIFI.key -> DisableWifiAction::class.java
             else -> return null
         }
 

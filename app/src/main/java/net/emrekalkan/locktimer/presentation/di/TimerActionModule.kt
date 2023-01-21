@@ -6,10 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.DisableBluetoothAction
-import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.LockScreenAction
-import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.StopAudioVideoAction
-import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.TimerAction
+import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.*
 import javax.inject.Singleton
 
 @Module
@@ -22,11 +19,13 @@ object TimerActionModule {
         stopAudioVideoAction: StopAudioVideoAction,
         lockScreenAction: LockScreenAction,
         disableBluetoothAction: DisableBluetoothAction,
+        disableWifiAction: DisableWifiAction
     ): List<TimerAction> {
         return listOf(
             stopAudioVideoAction,
             lockScreenAction,
-            disableBluetoothAction
+            disableBluetoothAction,
+            disableWifiAction
         )
     }
 
