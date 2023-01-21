@@ -103,8 +103,7 @@ private fun ScheduleScreenContent(
                     Icon(
                         modifier = Modifier.clickable { navigateToPreferences() },
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "",
-                        tint = MaterialTheme.colors.onPrimary
+                        contentDescription = ""
                     )
                 }
             )
