@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Lock Timer</string>
     <string name="admin_receiver_label">Admin Receiver Label</string>
-    <string name="admin_receiver_description">Admin Receiver Description because why not…</string>
+    <string name="admin_receiver_description">Allow Lock Timer to lock the screen of this device</string>
 
     <string name="pref_title_lock_screen">Lock screen</string>
     <string name="pref_title_stop_audio">Stop audio/video</string>
@@ -18,4 +18,7 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="permissions_rationale">Following permissions are required to do this action:\n %1$s</string>
     <string name="dialog_settings">Settings</string>
+    <string name="admin_disable_request_description">Some of the functions will not work after disabling admin permission.</string>
+    <string name="admin_permission_enabled">Admin permission enabled.</string>
+    <string name="admin_permission_disabled">Admin permission disabled.</string>
 </resources>
