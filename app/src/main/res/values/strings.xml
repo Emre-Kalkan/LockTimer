@@ -21,4 +21,6 @@
     <string name="admin_disable_request_description">Some of the functions will not work after disabling admin permission.</string>
     <string name="admin_permission_enabled">Admin permission enabled.</string>
     <string name="admin_permission_disabled">Admin permission disabled.</string>
+    <string name="schedule_now">Schedule Now</string>
+    <string name="just_scheduled">Scheduled!</string>
 </resources>

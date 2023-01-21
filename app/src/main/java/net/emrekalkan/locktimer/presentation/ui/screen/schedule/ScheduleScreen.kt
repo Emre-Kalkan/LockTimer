@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,6 +73,7 @@ fun ScheduleScreen(
 
                 val serviceIntent = CountDownService.create(context, action)
                 context.startService(serviceIntent)
+                viewModel.onCountDownStarted()
             }
         },
         optionSelected = viewModel::onOptionClicked,
@@ -121,6 +123,7 @@ private fun ScheduleScreenContent(
         ScheduleButton(
             modifier = Modifier,
             enabled = uiState.selectedOption != null,
+            isScheduled = uiState.isScheduled,
             scheduleClicked = scheduleClicked
         )
     }
@@ -187,7 +190,8 @@ private fun OptionsList(
 @Composable
 private fun ScheduleButton(
     modifier: Modifier = Modifier,
-    enabled: Boolean = false,
+    enabled: Boolean,
+    isScheduled: Boolean,
     scheduleClicked: () -> Unit
 ) {
     Button(
@@ -197,7 +201,21 @@ private fun ScheduleButton(
         enabled = enabled,
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
     ) {
-        Text(text = "Schedule Now", style = typography.button, modifier = Modifier.padding(vertical = 8.dp))
+        val text = if (isScheduled) {
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = "",
+                modifier = Modifier.padding(end = 4.dp)
+            )
+            stringResource(id = R.string.just_scheduled)
+        } else {
+            stringResource(id = R.string.schedule_now)
+        }
+        Text(
+            text = text,
+            style = typography.button,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
     }
 }
 

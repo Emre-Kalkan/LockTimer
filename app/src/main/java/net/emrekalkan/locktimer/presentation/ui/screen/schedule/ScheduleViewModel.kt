@@ -11,7 +11,7 @@ class ScheduleViewModel : BaseViewModel<ScheduleUiState, ScheduleEvent>(Schedule
 
     fun onOptionClicked(option: SchedulerOption?) {
         setState {
-            copy(selectedOption = option)
+            copy(selectedOption = option, isScheduled = false)
         }
     }
 
@@ -21,10 +21,17 @@ class ScheduleViewModel : BaseViewModel<ScheduleUiState, ScheduleEvent>(Schedule
         return CountDownAction.Start(timeInMillis = option.timeInMillis)
     }
 
+    fun onCountDownStarted() {
+        setState {
+            copy(selectedOption = null, isScheduled = true)
+        }
+    }
+
     data class ScheduleUiState(
         val options: List<SchedulerOption> = SchedulerOption.defaults,
-        val selectedOption: SchedulerOption? = null
+        val selectedOption: SchedulerOption? = null,
+        val isScheduled: Boolean = false
     ) : State
 
-    sealed class ScheduleEvent: Event
+    sealed class ScheduleEvent : Event
 }
