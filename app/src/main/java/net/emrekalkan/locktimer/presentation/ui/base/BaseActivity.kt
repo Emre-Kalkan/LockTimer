@@ -1,4 +1,4 @@
-package net.emrekalkan.locktimer.presentation.base
+package net.emrekalkan.locktimer.presentation.ui.base
 
 import androidx.activity.ComponentActivity
 
