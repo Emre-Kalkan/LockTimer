@@ -2,17 +2,17 @@ package net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import net.emrekalkan.locktimer.presentation.util.extensions.devicePolicyManager
-import net.emrekalkan.locktimer.presentation.util.extensions.isAdminActive
+import net.emrekalkan.locktimer.presentation.ui.screen.admin.DeviceAdminState
 import javax.inject.Inject
 
 class LockScreenAction @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val deviceAdminState: DeviceAdminState
 ) : TimerAction {
     override fun perform() {
-        if (context.isAdminActive().not()) return
+        if (deviceAdminState.isAdmin.not()) return
 
-        context.devicePolicyManager {
+        deviceAdminState.runDevicePolicyManager {
             lockNow()
         }
     }

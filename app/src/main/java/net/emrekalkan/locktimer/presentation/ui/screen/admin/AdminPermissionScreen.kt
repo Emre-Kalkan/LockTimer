@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
@@ -42,18 +44,24 @@ fun AdminPermissionScreenPreview() {
 
 @Composable
 fun AdminPermissionScreen(
+    viewModel: AdminPermissionViewModel = hiltViewModel(),
     onBackButtonClick: OnBackButtonClick
 ) {
     val context = LocalContext.current
     val adminComponent = ComponentName(context, LockScreenAdminReceiver::class.java)
     val adminRequestLauncher = rememberLauncherForActivityResult(
         contract = AddAdminDeviceContract(),
-        onResult = { isAdmin ->
-            if (isAdmin) {
-                onBackButtonClick()
+        onResult = viewModel::onAdminResult
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                AdminPermissionViewModel.AdminPermissionScreenEvent.NavigateBack -> onBackButtonClick()
             }
         }
-    )
+    }
+
     AdminPermissionContent {
         adminRequestLauncher.launch(adminComponent)
     }

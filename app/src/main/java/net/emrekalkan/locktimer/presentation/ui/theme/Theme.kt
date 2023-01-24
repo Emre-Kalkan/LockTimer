@@ -7,12 +7,12 @@ import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-    primary = ColorBananaYellow,
+    primary = AppColors.ColorBananaYellow,
     primaryVariant = Color.DarkGray,
     secondary = Color.Yellow,
-    background = ColorGunMetal,
-    surface = ColorGunMetal,
-    onPrimary = ColorGunMetal,
+    background = AppColors.ColorGunMetal,
+    surface = AppColors.ColorGunMetal,
+    onPrimary = AppColors.ColorGunMetal,
     onSecondary = Color.White,
     onBackground = Color.White,
     onSurface = Color.White

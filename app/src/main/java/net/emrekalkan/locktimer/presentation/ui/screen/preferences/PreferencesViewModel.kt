@@ -1,6 +1,5 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.preferences
 
-import android.app.Application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -11,28 +10,22 @@ import net.emrekalkan.locktimer.domain.usecase.SetDataStorePreference
 import net.emrekalkan.locktimer.presentation.ui.base.BaseViewModel
 import net.emrekalkan.locktimer.presentation.ui.base.Event
 import net.emrekalkan.locktimer.presentation.ui.base.State
+import net.emrekalkan.locktimer.presentation.ui.screen.admin.DeviceAdminState
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferencesViewModel.PreferencesEvent
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferencesViewModel.PreferencesUiState
-import net.emrekalkan.locktimer.presentation.util.extensions.isAdminActive
 import javax.inject.Inject
 
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
-    private val application: Application,
     private val setDataStorePreference: SetDataStorePreference,
     private val getAvailablePreferences: GetAvailablePreferences,
+    private val deviceAdminState: DeviceAdminState
 ) : BaseViewModel<PreferencesUiState, PreferencesEvent>(PreferencesUiState()) {
 
     init {
-        getPrefs()
-    }
-
-    private fun getPrefs() {
         viewModelScope.launch {
-            val prefs = getAvailablePreferences()
-            setState {
-                copy(preferences = prefs)
-            }
+            getPrefs()
+            collectAdminChanges()
         }
     }
 
@@ -48,8 +41,29 @@ class PreferencesViewModel @Inject constructor(
         }
     }
 
+    fun removeAdmin() {
+        deviceAdminState.removeAdmin()
+    }
+
+    private suspend fun getPrefs() {
+        val prefs = getAvailablePreferences()
+        setState {
+            copy(preferences = prefs)
+        }
+    }
+
+    private suspend fun collectAdminChanges() {
+        deviceAdminState.adminPermissionState
+            .collect { isAdmin ->
+                setState { copy(isAdmin = isAdmin) }
+                if (isAdmin.not()) {
+                    getPrefs()
+                }
+            }
+    }
+
     private fun shouldRequireAdminPermission(model: TimerActionPreferenceModel): Boolean {
-        return if (model.requiresAdmin && application.isAdminActive().not()) {
+        return if (model.requiresAdmin && deviceAdminState.isAdmin.not()) {
             setState {
                 val prefs = preferences.updateModel(checked = false, model)
                 copy(preferences = prefs)
@@ -72,6 +86,7 @@ class PreferencesViewModel @Inject constructor(
 
     data class PreferencesUiState(
         val preferences: List<PreferenceModel<*>> = emptyList(),
+        val isAdmin: Boolean = false
     ) : State
 
     sealed class PreferencesEvent : Event {

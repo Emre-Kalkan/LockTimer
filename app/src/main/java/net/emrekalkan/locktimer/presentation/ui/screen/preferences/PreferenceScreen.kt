@@ -2,6 +2,7 @@
 
 package net.emrekalkan.locktimer.presentation.ui.screen.preferences
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -9,11 +10,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,8 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
+import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.domain.model.PreferenceModel
 import net.emrekalkan.locktimer.domain.model.TimerActionPreferenceModel
+import net.emrekalkan.locktimer.presentation.ui.components.DefaultCard
 import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
@@ -33,13 +36,19 @@ import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 object PreferenceScreen : Screen(routeName = "PreferenceScreen")
 
 private typealias CheckChange = (Boolean, TimerActionPreferenceModel) -> Unit
+private typealias RemoveAdmin = () -> Unit
 
 @Preview
 @Composable
 private fun PreferenceScreenPreview() {
     LockTimerTheme {
         Surface {
-            PreferenceScreenContent()
+            PreferenceScreenContent(
+                uiState = PreferencesUiState(
+                    preferences = listOf(),
+                    isAdmin = true
+                )
+            )
         }
     }
 }
@@ -63,7 +72,8 @@ fun PreferenceScreen(
     PreferenceScreenContent(
         uiState = uiState.value,
         checkChange = { checked, model -> viewModel.onBooleanPrefChange(checked, model) },
-        onBackButtonClick = onBackButtonClick
+        onBackButtonClick = onBackButtonClick,
+        removeAdmin = viewModel::removeAdmin
     )
 }
 
@@ -71,7 +81,8 @@ fun PreferenceScreen(
 private fun PreferenceScreenContent(
     uiState: PreferencesUiState = PreferencesUiState(),
     checkChange: CheckChange = { _, _ -> },
-    onBackButtonClick: OnBackButtonClick = {}
+    onBackButtonClick: OnBackButtonClick = {},
+    removeAdmin: RemoveAdmin = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -86,6 +97,11 @@ private fun PreferenceScreenContent(
         )
         Header()
         Preferences(preferenceModels = uiState.preferences, checkChange = checkChange)
+        if (uiState.isAdmin) {
+            RemoveAdmin(
+                removeAdmin = removeAdmin
+            )
+        }
     }
 }
 
@@ -106,11 +122,9 @@ private fun Header() {
 private fun Preferences(preferenceModels: List<PreferenceModel<*>>, checkChange: CheckChange) {
     val lazyListState = rememberLazyListState()
 
-    Card(
+    DefaultCard(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(16.dp)
+            .fillMaxWidth(),
     ) {
         LazyColumn(state = lazyListState) {
             itemsIndexed(preferenceModels) { index, item ->
@@ -167,13 +181,33 @@ private fun BooleanPreferenceItem(model: TimerActionPreferenceModel, checkChange
 @Composable
 private fun PreferencesText(
     modifier: Modifier = Modifier,
-    text: String = ""
+    text: String = "",
+    color: Color = MaterialTheme.colors.onBackground
 ) {
     Text(
         modifier = modifier,
         text = text,
         style = MaterialTheme.typography.subtitle1,
         letterSpacing = 0.5.sp,
-        color = MaterialTheme.colors.onBackground
+        color = color
     )
+}
+
+@Composable
+private fun RemoveAdmin(
+    removeAdmin: RemoveAdmin
+) {
+    DefaultCard(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        PreferencesText(
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable { removeAdmin() }
+            ,
+            text = stringResource(id = R.string.remove_admin),
+            color = MaterialTheme.colors.error
+        )
+    }
 }

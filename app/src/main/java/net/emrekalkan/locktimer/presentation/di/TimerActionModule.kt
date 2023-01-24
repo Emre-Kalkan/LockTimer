@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.emrekalkan.locktimer.presentation.ui.screen.admin.DeviceAdminState
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.*
 import javax.inject.Singleton
 
@@ -37,8 +38,11 @@ object TimerActionModule {
 
     @Singleton
     @Provides
-    fun provideLockScreenAction(@ApplicationContext context: Context): LockScreenAction {
-        return LockScreenAction(context)
+    fun provideLockScreenAction(
+        @ApplicationContext context: Context,
+        deviceAdminState: DeviceAdminState
+    ): LockScreenAction {
+        return LockScreenAction(context, deviceAdminState)
     }
 
     @Singleton
