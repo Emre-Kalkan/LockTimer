@@ -1,4 +1,4 @@
-package net.emrekalkan.locktimer.presentation.ui.screen.onboarding
+package net.emrekalkan.locktimer.presentation.ui.screen.admin
 
 import android.app.Activity
 import android.app.admin.DevicePolicyManager

@@ -2,7 +2,7 @@ package net.emrekalkan.locktimer.presentation.ui.screen.base
 
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import net.emrekalkan.locktimer.presentation.ui.screen.onboarding.OnBoardingScreen
+import net.emrekalkan.locktimer.presentation.ui.screen.admin.AdminPermissionScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.PreferenceScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleScreen
 import net.emrekalkan.locktimer.presentation.ui.screen.splash.SplashScreen
@@ -23,14 +23,14 @@ fun NavGraphBuilder.createNavGraph(
             )
         }
         composable(
-            OnBoardingScreen.routeFormula,
+            AdminPermissionScreen.routeFormula,
             arguments = listOf(
-                navArgument(OnBoardingScreen.ARG_BACK_ROUTE) {
+                navArgument(AdminPermissionScreen.ARG_BACK_ROUTE) {
                     type = NavType.StringType
                 }
             )
         ) {
-            OnBoardingScreen(
+            AdminPermissionScreen(
                 onBackButtonClick = {
                     navController.popBackStack()
                 }
@@ -45,8 +45,8 @@ fun NavGraphBuilder.createNavGraph(
         }
         composable(PreferenceScreen.routeFormula) {
             PreferenceScreen(
-                navigateToOnBoarding = {
-                    val route = OnBoardingScreen.getRoute(PreferenceScreen.routeName)
+                navigateToAdminPermission = {
+                    val route = AdminPermissionScreen.getRoute(PreferenceScreen.routeName)
                     navController.navigate(route)
                 },
                 onBackButtonClick = {

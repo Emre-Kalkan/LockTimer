@@ -34,7 +34,7 @@
         </activity>
 
         <receiver
-            android:name=".presentation.ui.screen.onboarding.LockScreenAdminReceiver"
+            android:name=".presentation.ui.screen.admin.LockScreenAdminReceiver"
             android:description="@string/admin_receiver_description"
             android:exported="true"
             android:label="@string/admin_receiver_label"

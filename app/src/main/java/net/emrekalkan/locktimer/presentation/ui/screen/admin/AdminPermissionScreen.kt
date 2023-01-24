@@ -1,4 +1,4 @@
-package net.emrekalkan.locktimer.presentation.ui.screen.onboarding
+package net.emrekalkan.locktimer.presentation.ui.screen.admin
 
 import android.content.ComponentName
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,7 +21,7 @@ import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 
-object OnBoardingScreen : Screen(routeName = "OnBoardingScreen") {
+object AdminPermissionScreen : Screen(routeName = "AdminPermissionScreen") {
     const val ARG_BACK_ROUTE = "backRoute"
 
     override val args: List<String>
@@ -34,14 +34,14 @@ object OnBoardingScreen : Screen(routeName = "OnBoardingScreen") {
 
 @Preview
 @Composable
-fun OnBoardingScreenPreview() {
+fun AdminPermissionScreenPreview() {
     LockTimerTheme {
-        OnBoardingContent {}
+        AdminPermissionContent {}
     }
 }
 
 @Composable
-fun OnBoardingScreen(
+fun AdminPermissionScreen(
     onBackButtonClick: OnBackButtonClick
 ) {
     val context = LocalContext.current
@@ -54,13 +54,13 @@ fun OnBoardingScreen(
             }
         }
     )
-    OnBoardingContent {
+    AdminPermissionContent {
         adminRequestLauncher.launch(adminComponent)
     }
 }
 
 @Composable
-fun OnBoardingContent(requestAdmin: () -> Unit) {
+fun AdminPermissionContent(requestAdmin: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxSize()

@@ -54,7 +54,7 @@ class PreferencesViewModel @Inject constructor(
                 val prefs = preferences.updateModel(checked = false, model)
                 copy(preferences = prefs)
             }
-            setEvent { PreferencesEvent.NavigateToOnBoarding }
+            setEvent { PreferencesEvent.NavigateToAdminPermission }
             true
         } else {
             false
@@ -75,6 +75,6 @@ class PreferencesViewModel @Inject constructor(
     ) : State
 
     sealed class PreferencesEvent : Event {
-        object NavigateToOnBoarding : PreferencesEvent()
+        object NavigateToAdminPermission : PreferencesEvent()
     }
 }

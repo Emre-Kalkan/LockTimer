@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.net.Uri
-import net.emrekalkan.locktimer.presentation.ui.screen.onboarding.LockScreenAdminReceiver
+import net.emrekalkan.locktimer.presentation.ui.screen.admin.LockScreenAdminReceiver
 
 val Context.audioManager: AudioManager
     get() = getSystemService(Context.AUDIO_SERVICE) as AudioManager

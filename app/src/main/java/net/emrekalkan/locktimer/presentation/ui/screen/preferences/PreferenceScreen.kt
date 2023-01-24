@@ -47,13 +47,13 @@ private fun PreferenceScreenPreview() {
 @Composable
 fun PreferenceScreen(
     viewModel: PreferencesViewModel = hiltViewModel(),
-    navigateToOnBoarding: () -> Unit,
+    navigateToAdminPermission: () -> Unit,
     onBackButtonClick: OnBackButtonClick
 ) {
     LaunchedEffect(key1 = Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                PreferencesViewModel.PreferencesEvent.NavigateToOnBoarding -> navigateToOnBoarding()
+                PreferencesViewModel.PreferencesEvent.NavigateToAdminPermission -> navigateToAdminPermission()
             }
         }
     }
