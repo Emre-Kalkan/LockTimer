@@ -3,8 +3,8 @@ package net.emrekalkan.locktimer.presentation.ui.screen.admin
 import android.content.ComponentName
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,12 +16,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.*
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
+import kotlin.text.Typography
 
 object AdminPermissionScreen : Screen(routeName = "AdminPermissionScreen") {
     const val ARG_BACK_ROUTE = "backRoute"
@@ -38,7 +42,9 @@ object AdminPermissionScreen : Screen(routeName = "AdminPermissionScreen") {
 @Composable
 fun AdminPermissionScreenPreview() {
     LockTimerTheme {
-        AdminPermissionContent {}
+        Surface {
+            AdminPermissionContent {}
+        }
     }
 }
 
@@ -69,18 +75,19 @@ fun AdminPermissionScreen(
 
 @Composable
 fun AdminPermissionContent(requestAdmin: () -> Unit) {
-    Surface(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .border(32.dp, MaterialTheme.colors.background)
-            .padding(32.dp),
     ) {
-        ConstraintLayout {
+        ConstraintLayout(
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
+                .weight(1f)
+        ) {
             val (headerRef, descriptionRef, enableButtonRef) = createRefs()
             val verticalChainRef = createVerticalChain(
                 headerRef,
                 descriptionRef,
-                enableButtonRef,
                 chainStyle = ChainStyle.Packed(0.2f)
             )
             constrain(verticalChainRef) {
@@ -89,20 +96,17 @@ fun AdminPermissionContent(requestAdmin: () -> Unit) {
             }
             Header(headerRef, descriptionRef)
             PermissionDescriptionBody(headerRef, descriptionRef, enableButtonRef)
-            Button(
-                onClick = { requestAdmin() },
-                modifier = Modifier
-                    .padding(top = 32.dp)
-                    .constrainAs(enableButtonRef) {
-                        top.linkTo(descriptionRef.bottom)
-                        bottom.linkTo(parent.bottom)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        width = Dimension.fillToConstraints
-                    },
-            ) {
-                Text(text = "Enable")
-            }
+        }
+        Button(
+            onClick = { requestAdmin() },
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Enable",
+                style = MaterialTheme.typography.button,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
