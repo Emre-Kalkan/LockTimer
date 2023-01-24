@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.TimerActionPerformer
 import net.emrekalkan.locktimer.presentation.util.countdown.CountDownNotificationBuilder.Companion.NOTIFICATION_ID
 import javax.inject.Inject
@@ -37,8 +38,8 @@ class CountDownService : LifecycleService() {
     }
 
     private fun start(action: CountDownAction.Start) {
-        val timeText = action.formattedTimeText
-        val notification = countDownNotificationBuilder.createNotification(timeText)
+        val text = getString(R.string.timer_scheduled)
+        val notification = countDownNotificationBuilder.createNotification(text)
         startForeground(NOTIFICATION_ID, notification)
         startCountDown(action.timeInMillis)
     }

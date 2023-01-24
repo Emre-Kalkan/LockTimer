@@ -24,4 +24,5 @@
     <string name="schedule_now">Schedule Now</string>
     <string name="just_scheduled">Scheduled!</string>
     <string name="remove_admin">Remove Admin</string>
+    <string name="timer_scheduled">Timer scheduled.</string>
 </resources>

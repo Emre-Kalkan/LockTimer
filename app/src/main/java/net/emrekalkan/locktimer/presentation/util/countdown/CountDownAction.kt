@@ -14,6 +14,6 @@ sealed class CountDownAction : Parcelable {
     val formattedTimeText: String
         get() = when (this) {
             is Start -> DateFormatter.countDownFormat(timeInMillis)
-            else -> ""
+            Stop -> ""
         }
 }
