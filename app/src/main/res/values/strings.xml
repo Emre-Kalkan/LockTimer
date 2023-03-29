@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Lock Timer</string>
-    <string name="admin_receiver_label">Admin Receiver Label</string>
+    <string name="admin_receiver_label">Admin Permission</string>
     <string name="admin_receiver_description">Allow Lock Timer to lock the screen of this device</string>
 
     <string name="pref_title_lock_screen">Lock screen</string>
