@@ -42,7 +42,7 @@ fun TimerActionPermissionDialog(
 private fun getRevokedPermissionsRationale(context: Context, revokedPermissions: List<PermissionState>): String {
     val requiredPermissionTitles = revokedPermissions.map { permissionState ->
         when (permissionState.permission) {
-            Manifest.permission.BLUETOOTH_CONNECT -> context.getString(R.string.bluetooth)
+            Manifest.permission.BLUETOOTH_CONNECT -> " • ${context.getString(R.string.bluetooth)}"
             else -> ""
         }
     }

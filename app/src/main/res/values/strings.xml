@@ -27,7 +27,7 @@
     <string name="admin_permission_disabled">Admin permission disabled.</string>
     <string name="dialog_title_permission_required">Permission Required</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="permissions_rationale">Following permissions are required to do this action:\n %1$s</string>
+    <string name="permissions_rationale">Following permissions are required\n %1$s</string>
     <string name="dialog_settings">Settings</string>
     <string name="schedule_now">Schedule Now</string>
     <string name="just_scheduled">Scheduled!</string>

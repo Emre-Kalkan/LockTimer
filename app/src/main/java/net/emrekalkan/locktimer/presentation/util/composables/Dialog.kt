@@ -79,15 +79,15 @@ private fun DialogContent(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = params.title.getText(LocalContext.current),
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.h5
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = params.description.getText(LocalContext.current),
-                    style = MaterialTheme.typography.subtitle1
+                    style = MaterialTheme.typography.body1
                 )
-                Spacer(modifier = Modifier.padding(16.dp))
+                Spacer(modifier = Modifier.padding(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
