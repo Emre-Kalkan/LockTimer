@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -99,7 +100,7 @@ fun AdminPermissionContent(requestAdmin: () -> Unit) {
                 bottom.linkTo(parent.bottom)
             }
             Header(headerRef, descriptionRef)
-            PermissionDescriptionBody(headerRef, descriptionRef, enableButtonRef)
+            PermissionUsageCard(headerRef, descriptionRef, enableButtonRef)
         }
         Button(
             onClick = { requestAdmin() },
@@ -107,7 +108,7 @@ fun AdminPermissionContent(requestAdmin: () -> Unit) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Enable",
+                text = stringResource(R.string.enable),
                 style = MaterialTheme.typography.button,
                 modifier = Modifier.padding(8.dp)
             )
@@ -137,7 +138,7 @@ private fun ConstraintLayoutScope.Header(
                 .height(128.dp)
         )
         Text(
-            text = "Admin Permission Required",
+            text = stringResource(R.string.admin_permission_required),
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -148,34 +149,18 @@ private fun ConstraintLayoutScope.Header(
 }
 
 @Composable
-private fun ConstraintLayoutScope.PermissionDescriptionBody(
+private fun ConstraintLayoutScope.PermissionUsageCard(
     permissionTitle: ConstrainedLayoutReference,
     description: ConstrainedLayoutReference,
     enableButton: ConstrainedLayoutReference
 ) {
-    Column(
+    Card(
         modifier = Modifier
+            .padding(top = 32.dp)
             .constrainAs(description) {
                 top.linkTo(permissionTitle.bottom)
                 bottom.linkTo(enableButton.top)
             }
-    ) {
-        Text(
-            text = "We need your permission to function the app as needed. To be able to use some of the sensitive device functions you must grant needed permission.",
-            style = MaterialTheme.typography.body1,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth()
-        )
-        PermissionUsageCard()
-    }
-}
-
-@Composable
-private fun PermissionUsageCard() {
-    Card(
-        modifier = Modifier.padding(top = 32.dp)
     ) {
         Column(
             modifier = Modifier
@@ -183,13 +168,13 @@ private fun PermissionUsageCard() {
                 .padding(all = 16.dp)
         ) {
             Text(
-                text = "Following feature(s) will be used",
+                text = stringResource(R.string.admin_permission_used_features_title),
                 style = MaterialTheme.typography.body1
             )
 
             PermissionFeatureBox(
-                title = "•  Lock screen",
-                description = "The screen will be locked after the scheduled time by you has elapsed."
+                title = stringResource(R.string.admin_permission_lock_screen_bullet),
+                description = stringResource(R.string.admin_permission_lock_screen_description)
             )
         }
     }

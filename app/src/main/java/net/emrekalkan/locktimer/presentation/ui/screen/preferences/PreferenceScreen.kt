@@ -106,7 +106,7 @@ private fun PreferenceScreenContent(
 @Composable
 private fun Header() {
     Text(
-        text = "Preferences",
+        text = stringResource(R.string.preferences),
         style = MaterialTheme.typography.h3,
         color = MaterialTheme.colors.onBackground,
         textAlign = TextAlign.Center,

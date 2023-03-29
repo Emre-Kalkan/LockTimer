@@ -147,11 +147,11 @@ private fun Header(
                 .size(72.dp)
         )
         Text(
-            text = "Pick a time",
+            text = stringResource(R.string.schedule_title_first),
             style = typography.h4
         )
         Text(
-            text = "in minutes",
+            text = stringResource(R.string.schedule_title_second),
             style = typography.h6,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -304,7 +304,7 @@ fun ScheduleTextField(
     minutes: Int,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    hint: String = "Custom",
+    hint: String = stringResource(R.string.custom),
     onDone: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
