@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "645047145585",
+    "project_id": "lock-timer",
+    "storage_bucket": "lock-timer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645047145585:android:cff57a00a09b0c3297f7d0",
+        "android_client_info": {
+          "package_name": "net.emrekalkan.locktimer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "645047145585-g7l76s9v3ma2op6m9dpnc2ro18v433n2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_VswrR9Ustr_AXKmIZtfucwsyie3RlBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "645047145585-g7l76s9v3ma2op6m9dpnc2ro18v433n2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
