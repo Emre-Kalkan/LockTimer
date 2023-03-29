@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import net.emrekalkan.locktimer.R
+import net.emrekalkan.locktimer.presentation.ui.components.BannerAd
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleViewModel.ScheduleUiState
@@ -117,6 +118,7 @@ private fun ScheduleScreenContent(
                 selectedOption = uiState.selectedOption,
                 optionSelected = optionSelected
             )
+            BannerAd(modifier = Modifier.padding(top = 8.dp))
         }
 
         Spacer(modifier = Modifier.padding(top = 16.dp))

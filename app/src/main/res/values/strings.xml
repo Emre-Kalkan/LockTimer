@@ -1,4 +1,8 @@
 <resources>
+
+    <string name="admob_app_id">ca-app-pub-5410634391047139~7729235998</string>
+    <string name="admob_banner_id">ca-app-pub-5410634391047139/2476909317</string>
+
     <string name="app_name">Lock Timer</string>
     <string name="admin_receiver_label">Admin Permission</string>
     <string name="admin_receiver_description">Allow Lock Timer to lock the screen of this device</string>

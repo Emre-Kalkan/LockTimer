@@ -25,6 +25,7 @@ import com.google.accompanist.permissions.*
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.domain.model.PreferenceModel
 import net.emrekalkan.locktimer.domain.model.TimerActionPreferenceModel
+import net.emrekalkan.locktimer.presentation.ui.components.BannerAd
 import net.emrekalkan.locktimer.presentation.ui.components.DefaultCard
 import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
@@ -102,6 +103,7 @@ private fun PreferenceScreenContent(
                 removeAdmin = removeAdmin
             )
         }
+        BannerAd(modifier = Modifier.padding(top = 8.dp))
     }
 }
 
@@ -204,8 +206,7 @@ private fun RemoveAdmin(
         PreferencesText(
             modifier = Modifier
                 .padding(16.dp)
-                .clickable { removeAdmin() }
-            ,
+                .clickable { removeAdmin() },
             text = stringResource(id = R.string.remove_admin),
             color = MaterialTheme.colors.error
         )
