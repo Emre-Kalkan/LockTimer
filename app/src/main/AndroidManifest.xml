@@ -52,8 +52,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.util.countdown.CountDownAlarmReceiver" />
-
         <service android:name=".presentation.util.countdown.CountDownService" />
 
     </application>
