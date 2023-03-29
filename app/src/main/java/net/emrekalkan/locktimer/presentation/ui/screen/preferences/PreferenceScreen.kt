@@ -3,13 +3,9 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.preferences
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -87,23 +83,23 @@ private fun PreferenceScreenContent(
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .scrollable(scrollState, Orientation.Vertical),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Toolbar(
-            onBackButtonClick = onBackButtonClick
-        )
-        Header()
-        Preferences(preferenceModels = uiState.preferences, checkChange = checkChange)
-        if (uiState.isAdmin) {
-            RemoveAdmin(
-                removeAdmin = removeAdmin
-            )
+    Column {
+        Toolbar(onBackButtonClick = onBackButtonClick)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
+            Header()
+            Preferences(preferenceModels = uiState.preferences, checkChange = checkChange)
+            if (uiState.isAdmin) {
+                RemoveAdmin(
+                    removeAdmin = removeAdmin
+                )
+            }
+            BannerAd(modifier = Modifier.padding(top = 8.dp))
         }
-        BannerAd(modifier = Modifier.padding(top = 8.dp))
     }
 }
 
@@ -122,14 +118,12 @@ private fun Header() {
 
 @Composable
 private fun Preferences(preferenceModels: List<PreferenceModel<*>>, checkChange: CheckChange) {
-    val lazyListState = rememberLazyListState()
-
     DefaultCard(
         modifier = Modifier
             .fillMaxWidth(),
     ) {
-        LazyColumn(state = lazyListState) {
-            itemsIndexed(preferenceModels) { index, item ->
+        Column {
+            preferenceModels.forEachIndexed { index, item ->
                 when (item) {
                     is TimerActionPreferenceModel -> BooleanPreferenceItem(item, checkChange)
                 }

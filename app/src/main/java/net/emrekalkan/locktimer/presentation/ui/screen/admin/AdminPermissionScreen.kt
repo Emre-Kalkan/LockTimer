@@ -4,7 +4,9 @@ import android.content.ComponentName
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +27,6 @@ import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.components.OnBackButtonClick
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
-import kotlin.text.Typography
 
 object AdminPermissionScreen : Screen(routeName = "AdminPermissionScreen") {
     const val ARG_BACK_ROUTE = "backRoute"
@@ -75,9 +76,12 @@ fun AdminPermissionScreen(
 
 @Composable
 fun AdminPermissionContent(requestAdmin: () -> Unit) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
     ) {
         ConstraintLayout(
             modifier = Modifier
