@@ -7,12 +7,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
@@ -24,10 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -216,22 +221,13 @@ private fun ScheduleButton(
 
     Column {
         if (permissionState?.status?.isGranted?.not().orFalse) {
-            Text(
-                text = stringResource(R.string.permission_notification_info),
-                style = typography.caption,
-                textDecoration = TextDecoration.Underline,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 8.dp)
-                    .clickable {
-                        if (permissionState?.status?.shouldShowRationale.orFalse) {
-                            context.navigateToSettings()
-                        } else {
-                            permissionState?.launchPermissionRequest()
-                        }
-                    }
-            )
+            PostNotificationInfoText {
+                if (permissionState?.status?.shouldShowRationale.orFalse) {
+                    context.navigateToSettings()
+                } else {
+                    permissionState?.launchPermissionRequest()
+                }
+            }
         }
 
         Button(
@@ -258,6 +254,30 @@ private fun ScheduleButton(
             )
         }
     }
+}
+
+@Composable
+private fun PostNotificationInfoText(onClick: () -> Unit) {
+    val iconTag = "[icon]"
+    val text = buildAnnotatedString {
+        append("${stringResource(R.string.permission_notification_info)} ")
+        appendInlineContent(iconTag, iconTag)
+    }
+    val inlineContent = mapOf(
+        iconTag to InlineTextContent(Placeholder(14.sp, 14.sp, PlaceholderVerticalAlign.Center)) {
+            Icon(Icons.Default.ArrowForward, contentDescription = "")
+        }
+    )
+    Text(
+        text = text,
+        style = typography.caption,
+        textAlign = TextAlign.Center,
+        inlineContent = inlineContent,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = 8.dp)
+            .clickable { onClick() }
+    )
 }
 
 @Composable

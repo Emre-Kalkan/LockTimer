@@ -40,5 +40,5 @@
     <string name="custom">Custom</string>
     <string name="notification_count_down_name">Timer Count Down</string>
     <string name="notification_count_down_description">Lock timer count down notification</string>
-    <string name="permission_notification_info">Grant \'Notification\' permission to see the remaining time.</string>
+    <string name="permission_notification_info">Grant \'Notification\' permission to see the remaining time</string>
 </resources>
