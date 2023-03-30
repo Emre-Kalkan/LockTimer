@@ -1,5 +1,7 @@
 package net.emrekalkan.locktimer.presentation.ui.screen.schedule
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,11 +26,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.components.BannerAd
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
@@ -38,6 +46,8 @@ import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.SpecificOption
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 import net.emrekalkan.locktimer.presentation.util.countdown.CountDownService
+import net.emrekalkan.locktimer.presentation.util.extensions.navigateToSettings
+import net.emrekalkan.locktimer.presentation.util.extensions.orFalse
 import net.emrekalkan.locktimer.presentation.util.extensions.orZero
 
 object ScheduleScreen : Screen(routeName = "ScheduleScreen")
@@ -189,6 +199,7 @@ private fun OptionsList(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun ScheduleButton(
     modifier: Modifier = Modifier,
@@ -196,28 +207,56 @@ private fun ScheduleButton(
     isScheduled: Boolean,
     scheduleClicked: () -> Unit
 ) {
-    Button(
-        modifier = modifier
-            .fillMaxWidth(),
-        onClick = { scheduleClicked() },
-        enabled = enabled,
-        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-    ) {
-        val text = if (isScheduled) {
-            Icon(
-                imageVector = Icons.Default.Done,
-                contentDescription = "",
-                modifier = Modifier.padding(end = 4.dp)
+    val context = LocalContext.current
+    val permissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        null
+    }
+
+    Column {
+        if (permissionState?.status?.isGranted?.not().orFalse) {
+            Text(
+                text = stringResource(R.string.permission_notification_info),
+                style = typography.caption,
+                textDecoration = TextDecoration.Underline,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 8.dp)
+                    .clickable {
+                        if (permissionState?.status?.shouldShowRationale.orFalse) {
+                            context.navigateToSettings()
+                        } else {
+                            permissionState?.launchPermissionRequest()
+                        }
+                    }
             )
-            stringResource(id = R.string.just_scheduled)
-        } else {
-            stringResource(id = R.string.schedule_now)
         }
-        Text(
-            text = text,
-            style = typography.button,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
+
+        Button(
+            modifier = modifier
+                .fillMaxWidth(),
+            onClick = { scheduleClicked() },
+            enabled = enabled,
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+        ) {
+            val text = if (isScheduled) {
+                Icon(
+                    imageVector = Icons.Default.Done,
+                    contentDescription = "",
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+                stringResource(id = R.string.just_scheduled)
+            } else {
+                stringResource(id = R.string.schedule_now)
+            }
+            Text(
+                text = text,
+                style = typography.button,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
     }
 }
 
@@ -236,7 +275,6 @@ private fun OptionText(
     )
 }
 
-@Preview
 @Composable
 private fun SpecificOptionContent(
     option: SpecificOption = SpecificOption(timeInMinutes = 10),
@@ -262,7 +300,6 @@ private fun SpecificOptionContent(
     }
 }
 
-@Preview
 @Composable
 private fun CustomOptionContent(
     option: CustomOption = CustomOption(),
@@ -276,18 +313,18 @@ private fun CustomOptionContent(
             .height(64.dp)
     ) {
         val selectedCustomOption = selectedOption as? CustomOption
-        var textState by remember { mutableStateOf(option.timeInMinutes) }
+        val customOptionValue = selectedCustomOption?.timeInMinutes ?: option.timeInMinutes
         val isSelected = selectedCustomOption?.timeInMinutes.orZero<Int>() > 0
 
         ScheduleTextField(
             modifier = Modifier.weight(1f),
-            minutes = textState,
+            minutes = customOptionValue,
             onValueChange = { value ->
                 if (value.isDigitsOnly()) {
-                    textState = value.toIntOrNull().orZero()
+                    optionSelected(option.copy(timeInMinutes = value.toInt()))
                 }
             },
-            onDone = { selectCustomOption(textState, option, optionSelected) }
+            onDone = { selectCustomOption(customOptionValue, option, optionSelected) }
         )
         if (isSelected) {
             Icon(
@@ -305,7 +342,7 @@ fun ScheduleTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = stringResource(R.string.custom),
-    onDone: () -> Unit = {}
+    onDone: (String) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     val focused = remember { mutableStateOf(false) }
@@ -343,7 +380,9 @@ fun ScheduleTextField(
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions {
-            onDone()
+            if (text.isDigitsOnly()) {
+                onDone(text)
+            }
             focusManager.clearFocus()
         }
     )

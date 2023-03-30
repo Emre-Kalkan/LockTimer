@@ -4,9 +4,6 @@ package net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -16,6 +13,7 @@ import net.emrekalkan.locktimer.presentation.util.Text
 import net.emrekalkan.locktimer.presentation.util.composables.Dialog
 import net.emrekalkan.locktimer.presentation.util.composables.DialogParams
 import net.emrekalkan.locktimer.presentation.util.composables.OnDismiss
+import net.emrekalkan.locktimer.presentation.util.extensions.navigateToSettings
 
 @Composable
 fun TimerActionPermissionDialog(
@@ -26,13 +24,7 @@ fun TimerActionPermissionDialog(
     val dialogParams = DialogParams(
         title = Text.Res(R.string.dialog_title_permission_required),
         description = Text.Raw(getRevokedPermissionsRationale(LocalContext.current, revokedPermissions)),
-        positive = R.string.dialog_settings to {
-            val appSettingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                data = Uri.fromParts("package", context.packageName, null)
-            }
-            context.startActivity(appSettingsIntent)
-        },
+        positive = R.string.dialog_settings to { context.navigateToSettings() },
         negative = R.string.dialog_cancel to { onDismiss() }
     )
 

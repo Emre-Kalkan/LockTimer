@@ -2,6 +2,7 @@ package net.emrekalkan.locktimer.presentation.util.countdown
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +25,13 @@ class CountDownService : LifecycleService() {
     lateinit var timerActionPerformer: TimerActionPerformer
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (val action = intent?.getParcelableExtra<CountDownAction>(KEY_ACTION)) {
+        val action: CountDownAction? = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.TIRAMISU) {
+            intent?.getParcelableExtra(KEY_ACTION, CountDownAction::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent?.getParcelableExtra(KEY_ACTION)
+        }
+        when (action) {
             is CountDownAction.Start -> start(action)
             is CountDownAction.Stop -> stopSelf()
             else -> {}

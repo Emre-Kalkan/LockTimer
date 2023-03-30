@@ -20,6 +20,7 @@ class DisableBluetoothAction @Inject constructor(
 
         val adapter = context.getBluetoothAdapter() ?: return
         if (adapter.isEnabled) {
+            @Suppress("DEPRECATION")
             adapter.disable()
         }
     }

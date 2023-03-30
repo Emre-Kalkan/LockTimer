@@ -33,14 +33,17 @@ class CountDownNotificationBuilder @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setDefaults(Notification.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
+            .setOngoing(true)
             .addAction(createStopAction())
     }
 
     private fun initChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
-        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, IMPORTANCE_HIGH).apply {
-            description = CHANNEL_DESCRIPTION
+        val channelName = context.getString(R.string.notification_count_down_name)
+        val channelDescription = context.getString(R.string.notification_count_down_description)
+        val channel = NotificationChannel(CHANNEL_ID, channelName, IMPORTANCE_HIGH).apply {
+            description = channelDescription
         }
         notificationManager.createNotificationChannel(channel)
     }
@@ -69,8 +72,6 @@ class CountDownNotificationBuilder @Inject constructor(
     companion object {
         const val NOTIFICATION_ID = 65432345
         private const val CHANNEL_ID = "CountDownNotificationId"
-        private const val CHANNEL_NAME = "CountDownNotification"
-        private const val CHANNEL_DESCRIPTION = "Lock timer count down notification"
         private const val COUNT_DOWN_REQUEST_CODE = 3123
     }
 }
