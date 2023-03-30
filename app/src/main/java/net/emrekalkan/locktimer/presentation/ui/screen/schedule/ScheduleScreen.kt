@@ -20,11 +20,13 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Placeholder
@@ -50,10 +52,12 @@ import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleViewMode
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.CustomOption
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.SpecificOption
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
+import net.emrekalkan.locktimer.presentation.util.KeyboardState
 import net.emrekalkan.locktimer.presentation.util.countdown.CountDownService
 import net.emrekalkan.locktimer.presentation.util.extensions.navigateToSettings
 import net.emrekalkan.locktimer.presentation.util.extensions.orFalse
 import net.emrekalkan.locktimer.presentation.util.extensions.orZero
+import net.emrekalkan.locktimer.presentation.util.keyboardAsState
 
 object ScheduleScreen : Screen(routeName = "ScheduleScreen")
 
@@ -72,13 +76,23 @@ private fun ScheduleScreenPreview() {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ScheduleScreen(
     viewModel: ScheduleViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit
 ) {
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val uiState = viewModel.uiState.collectAsState()
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                ScheduleViewModel.ScheduleEvent.HideKeyboard -> keyboardController?.hide()
+            }
+        }
+    }
 
     ScheduleScreenContent(
         modifier = Modifier.fillMaxSize(),
@@ -133,10 +147,10 @@ private fun ScheduleScreenContent(
                 selectedOption = uiState.selectedOption,
                 optionSelected = optionSelected
             )
-            BannerAd(modifier = Modifier.padding(top = 8.dp))
         }
 
         Spacer(modifier = Modifier.padding(top = 16.dp))
+        BannerAd(modifier = Modifier.padding(top = 8.dp))
         ScheduleButton(
             modifier = Modifier,
             enabled = uiState.selectedOption != null,
@@ -359,23 +373,28 @@ private fun CustomOptionContent(
 @Composable
 fun ScheduleTextField(
     minutes: Int,
-    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = stringResource(R.string.custom),
+    onValueChange: (String) -> Unit,
     onDone: (String) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
-    val focused = remember { mutableStateOf(false) }
+    var focused by remember { mutableStateOf(false) }
     val text = minutes.takeIf { it > 0 }?.toString() ?: ""
+    val keyboardState by keyboardAsState()
+
+    if (keyboardState == KeyboardState.Closed) {
+        focusManager.clearFocus(force = true)
+    }
 
     TextField(
         modifier = modifier
-            .onFocusChanged { focused.value = it.hasFocus },
+            .onFocusChanged { focused = it.hasFocus },
         value = text,
         onValueChange = onValueChange,
         singleLine = true,
         placeholder = {
-            if (text.isEmpty() && focused.value.not()) {
+            if (text.isEmpty() && focused.not()) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = hint,
@@ -400,7 +419,7 @@ fun ScheduleTextField(
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions {
-            if (text.isDigitsOnly()) {
+            if (text.isNotEmpty() && text.isDigitsOnly()) {
                 onDone(text)
             }
             focusManager.clearFocus()

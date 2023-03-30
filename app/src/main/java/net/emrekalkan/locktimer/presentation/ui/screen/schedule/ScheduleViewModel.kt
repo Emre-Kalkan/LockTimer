@@ -13,6 +13,10 @@ class ScheduleViewModel : BaseViewModel<ScheduleUiState, ScheduleEvent>(Schedule
         setState {
             copy(selectedOption = option, isScheduled = false)
         }
+
+        if (option !is SchedulerOption.CustomOption) {
+            setEvent { ScheduleEvent.HideKeyboard }
+        }
     }
 
     fun getCountDownAction(): CountDownAction? {
@@ -33,5 +37,7 @@ class ScheduleViewModel : BaseViewModel<ScheduleUiState, ScheduleEvent>(Schedule
         val isScheduled: Boolean = false
     ) : State
 
-    sealed class ScheduleEvent : Event
+    sealed class ScheduleEvent : Event {
+        object HideKeyboard: ScheduleEvent()
+    }
 }
