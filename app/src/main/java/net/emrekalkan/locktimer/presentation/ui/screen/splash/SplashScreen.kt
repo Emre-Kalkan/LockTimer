@@ -17,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
+import net.emrekalkan.locktimer.presentation.ui.screen.interstitial.InterstitialAdManager
 
 object SplashScreen : Screen("SplashScreen")
 
@@ -35,6 +36,7 @@ fun SplashScreen(
         scope.launch {
             delay(1000)
             navigateToSchedule()
+            InterstitialAdManager.unlock()
         }
     })
     SplashScreenContent()

@@ -47,12 +47,14 @@ import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.components.BannerAd
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
 import net.emrekalkan.locktimer.presentation.ui.screen.Screen
+import net.emrekalkan.locktimer.presentation.ui.screen.interstitial.InterstitialAdManager
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.ScheduleViewModel.ScheduleUiState
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.CustomOption
 import net.emrekalkan.locktimer.presentation.ui.screen.schedule.SchedulerOption.SpecificOption
 import net.emrekalkan.locktimer.presentation.ui.theme.LockTimerTheme
 import net.emrekalkan.locktimer.presentation.util.KeyboardState
 import net.emrekalkan.locktimer.presentation.util.countdown.CountDownService
+import net.emrekalkan.locktimer.presentation.util.dice.DiceChance
 import net.emrekalkan.locktimer.presentation.util.extensions.navigateToSettings
 import net.emrekalkan.locktimer.presentation.util.extensions.orFalse
 import net.emrekalkan.locktimer.presentation.util.extensions.orZero
@@ -246,10 +248,10 @@ private fun ScheduleButton(
             modifier = modifier
                 .fillMaxWidth(),
             onClick = {
-                if (permissionState?.status?.isGranted.orFalse) {
-                    scheduleClicked()
+                if (permissionState == null || permissionState.status.isGranted) {
+                    InterstitialAdManager.tryShow(context, DiceChance.HIGH, scheduleClicked)
                 } else {
-                    permissionState?.launchPermissionRequest()
+                    permissionState.launchPermissionRequest()
                 }
             },
             enabled = enabled,
@@ -358,7 +360,7 @@ private fun CustomOptionContent(
             modifier = Modifier.weight(1f),
             minutes = customOptionValue,
             onValueChange = { value ->
-                if (value.isDigitsOnly()) {
+                if (value.isNotEmpty() && value.isDigitsOnly()) {
                     optionSelected(option.copy(timeInMinutes = value.toInt()))
                 }
             },
