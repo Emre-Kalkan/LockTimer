@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package net.emrekalkan.locktimer.presentation.ui.screen.schedule
 
 import android.Manifest
@@ -40,10 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
+import com.google.accompanist.permissions.*
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.components.BannerAd
 import net.emrekalkan.locktimer.presentation.ui.components.Toolbar
@@ -218,7 +217,6 @@ private fun OptionsList(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun ScheduleButton(
     modifier: Modifier = Modifier,
@@ -234,7 +232,7 @@ private fun ScheduleButton(
     }
 
     Column {
-        if (permissionState?.status?.isGranted?.not().orFalse) {
+        if (permissionState?.status?.shouldShowRationale.orFalse) {
             PostNotificationInfoText {
                 if (permissionState?.status?.shouldShowRationale.orFalse) {
                     context.navigateToSettings()
@@ -247,7 +245,13 @@ private fun ScheduleButton(
         Button(
             modifier = modifier
                 .fillMaxWidth(),
-            onClick = { scheduleClicked() },
+            onClick = {
+                if (permissionState?.status?.isGranted.orFalse) {
+                    scheduleClicked()
+                } else {
+                    permissionState?.launchPermissionRequest()
+                }
+            },
             enabled = enabled,
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
         ) {
