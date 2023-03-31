@@ -234,7 +234,7 @@ private fun ScheduleButton(
     }
 
     Column {
-        if (permissionState?.status?.shouldShowRationale.orFalse) {
+        if (permissionState?.status?.isGranted?.not().orFalse) {
             PostNotificationInfoText {
                 if (permissionState?.status?.shouldShowRationale.orFalse) {
                     context.navigateToSettings()
@@ -248,7 +248,7 @@ private fun ScheduleButton(
             modifier = modifier
                 .fillMaxWidth(),
             onClick = {
-                if (permissionState == null || permissionState.status.isGranted) {
+                if (permissionState == null || permissionState.status.run { isGranted.or(shouldShowRationale) }) {
                     InterstitialAdManager.tryShow(context, DiceChance.HIGH, scheduleClicked)
                 } else {
                     permissionState.launchPermissionRequest()

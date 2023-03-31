@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import net.emrekalkan.locktimer.R
 import net.emrekalkan.locktimer.presentation.ui.screen.preferences.actions.TimerActionPerformer
 import net.emrekalkan.locktimer.presentation.util.countdown.CountDownNotificationBuilder.Companion.NOTIFICATION_ID
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -33,7 +34,8 @@ class CountDownService : LifecycleService() {
         }
         when (action) {
             is CountDownAction.Start -> start(action)
-            is CountDownAction.Stop -> stopSelf()
+            is CountDownAction.Notification.Stop -> stopSelf()
+            is CountDownAction.Notification.Extend -> extendRemainingTime(action.extend)
             else -> {}
         }
         return super.onStartCommand(intent, flags, startId)
@@ -63,6 +65,11 @@ class CountDownService : LifecycleService() {
                 }
             }
         }
+    }
+
+    private fun extendRemainingTime(extend: CountDownExtend) {
+        val extendTimeInMillis = TimeUnit.MINUTES.toMillis(extend.timeInMinutes.toLong())
+        countDownTimer.extend(extendTimeInMillis)
     }
 
     companion object {

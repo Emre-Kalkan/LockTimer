@@ -35,6 +35,8 @@ class CountDownNotificationBuilder @Inject constructor(
             .setOnlyAlertOnce(true)
             .setOngoing(true)
             .addAction(createStopAction())
+            .addAction(createExtendAction(CountDownAction.REQUEST_CODE_EXTEND_FIVE, CountDownExtend.FIVE))
+            .addAction(createExtendAction(CountDownAction.REQUEST_CODE_EXTEND_FIFTEEN, CountDownExtend.FIFTEEN))
     }
 
     private fun initChannel() {
@@ -48,14 +50,22 @@ class CountDownNotificationBuilder @Inject constructor(
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun createPendingIntent(countDownAction: CountDownAction): PendingIntent {
+    private fun createPendingIntent(countDownAction: CountDownAction.Notification): PendingIntent {
         val countDownServiceIntent = CountDownService.create(context, countDownAction)
-        return PendingIntent.getService(context, COUNT_DOWN_REQUEST_CODE, countDownServiceIntent, pendingIntentFlags)
+        return PendingIntent.getService(context, countDownAction.requestCode, countDownServiceIntent, pendingIntentFlags)
     }
 
     private fun createStopAction(): NotificationCompat.Action {
-        val pendingIntent = createPendingIntent(CountDownAction.Stop)
-        return NotificationCompat.Action(null, "Stop", pendingIntent)
+        val action = CountDownAction.Notification.Stop
+        val pendingIntent = createPendingIntent(action)
+        val title = context.getString(R.string.stop)
+        return NotificationCompat.Action(null, title, pendingIntent)
+    }
+
+    private fun createExtendAction(requestCode: Int, extend: CountDownExtend): NotificationCompat.Action {
+        val pendingIntent = createPendingIntent(CountDownAction.Notification.Extend(requestCode, extend))
+        val title = context.getString(extend.titleRes)
+        return NotificationCompat.Action(null, title, pendingIntent)
     }
 
     fun createNotification(text: String): Notification {
@@ -72,6 +82,5 @@ class CountDownNotificationBuilder @Inject constructor(
     companion object {
         const val NOTIFICATION_ID = 65432345
         private const val CHANNEL_ID = "CountDownNotificationId"
-        private const val COUNT_DOWN_REQUEST_CODE = 3123
     }
 }

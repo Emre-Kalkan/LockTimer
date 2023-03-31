@@ -33,6 +33,12 @@ abstract class AsyncTimer {
 
     fun isActive() = timerJob?.isActive ?: false
 
+    fun extend(extendTimeInMillis: Long) {
+        val timeInMillis = extendTimeInMillis + remaining
+        stop()
+        start(timeInMillis)
+    }
+
     companion object {
         private const val SECOND_IN_MILLIS = 1000L
     }

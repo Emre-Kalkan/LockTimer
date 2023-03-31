@@ -42,4 +42,8 @@
     <string name="notification_count_down_name">Timer Count Down</string>
     <string name="notification_count_down_description">Lock timer count down notification</string>
     <string name="permission_notification_info">Grant \'Notification\' permission to see the remaining time</string>
+    <string name="stop">Stop</string>
+    <string name="extend_five_minutes">+5 Min</string>
+    <string name="extend_fifteen_minutes">+15 Min</string>
+    <string name="extend_thirty_minutes">+30 Min</string>
 </resources>
